@@ -1,40 +1,51 @@
 <template>
-  <v-card
-    class="mx-auto"
-  >
-    <v-card-title class="d-flex justify-center">Inicio de sesión</v-card-title>
-    <v-card-text>
-      <v-row class="d-flex justify-center ma-6">
-        <v-col cols="10">
-          <v-text-field
-            :disabled="sended"
-            v-model="username"
-            :rules="usernameRules"
-            :loading="loading"
-            v-on:keyup.enter="onEnter"
-            :autofocus="true"
-            label="Usuario"
-            required
-          ></v-text-field>
-        </v-col>
-        <v-col cols="10">
-          <v-text-field
-            :disabled="sended"
-            v-model="password"
-            :rules="passwordRules"
-            :loading="loading"
-            v-on:keyup.enter="onEnter"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show1 ? 'text' : 'password'"
-            label="Contraseña"
-            required
-            @click:append="show1 = !show1"
-          ></v-text-field>
-        </v-col>
-      </v-row>
-    </v-card-text>
+  <v-row class="d-flex justify-center">
+    <v-col cols="4">
+      <v-card
+        class="mx-auto login-card"
+      >
+        <v-card-title class="justify-center">Inicio de sesión</v-card-title>
+        <v-card-text>
+          <v-row class="d-flex justify-center ma-6">
+            <v-col cols="10">
+              <v-text-field
+                :disabled="sended"
+                v-model="username"
+                :rules="usernameRules"
+                :loading="loading"
+                v-on:keyup.enter="onEnter"
+                :autofocus="true"
+                label="Usuario"
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="10">
+              <v-text-field
+                :disabled="sended"
+                v-model="password"
+                :rules="passwordRules"
+                :loading="loading"
+                v-on:keyup.enter="onEnter"
+                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                :type="show1 ? 'text' : 'password'"
+                label="Contraseña"
+                required
+                @click:append="show1 = !show1"
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row class="justify-center">
+            <v-col cols="4">
+              <v-btn>Iniciar Sesión</v-btn>
+            </v-col>
+            <br>
+          </v-row>
+        </v-card-text>
 
-  </v-card>
+      </v-card>
+
+    </v-col>
+  </v-row>
 </template>
 <script>
 export default {
@@ -61,3 +72,8 @@ export default {
   })
 }
 </script>
+<style scoped>
+.login-card {
+  margin-top: 2rem;
+}
+</style>

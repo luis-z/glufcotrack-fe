@@ -1,9 +1,11 @@
 <template>
   <v-app>
+    <notifications position="top center" width="600px"/>
     <v-app-bar
       app
       style="background: linear-gradient(90deg,#141b32,#3b466c 48%,#141b32);"
       dark
+      :flat="currentRouteName == 'Register' || currentRouteName == 'Login'"
     >
       <div class="d-flex align-center">
 
@@ -14,17 +16,19 @@
           min-width="150"
           src="../src/assets/bg-header.png"
           width="150"
+          style="cursor:pointer"
+          @click="goHome()"
         />
       </div>
 
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
         text
+        v-show="currentRouteName !== 'Register'"
+        @click="goRegister()"
       >
-        <span class="mr-2">Registro</span>
+        <span class="mr-2" >Registro</span>
         <v-icon>mdi-open-in-new</v-icon>
       </v-btn>
     </v-app-bar>
@@ -43,8 +47,29 @@ export default {
   name: 'App',
 
   data: () => ({
-    //
-    logoPath: path.join(__dirname, 'src', 'assets', 'resources', 'assets', 'logo.png')
-  })
+
+  }),
+  computed: {
+    currentRouteName() {
+      return this.$route.name;
+    }
+  },
+  methods: {
+    goHome () {
+      this.$router.push('/')
+    },
+    goRegister() {
+      this.$router.push('/registro')
+    }
+  }
 }
 </script>
+<style>
+.v-main {
+  background: linear-gradient(90deg,#141b32,#3b466c 48%,#141b32);
+}
+
+.vue-notification {
+  font-size: 16px;
+}
+</style>
