@@ -69,7 +69,70 @@ export default {
       v => !!v || 'La contraseña es requerida',
       v => (v && v.length >= 8) || 'Mínimo 8 carácteres'
     ]
-  })
+  }),
+  methods: {
+    async onEnter () {
+      await this.login()
+    },
+    async login () {
+      try {
+
+        await this.validations()
+
+        this.loading = true
+
+        // validaciones 
+        const login = await this.$axios.post('login', {
+          'username': this.username,
+          'password': this.password
+        })
+
+        this.loading = false
+
+        this.$notify({
+          title: 'Exito',
+          text: login.data.data,
+          type: 'success'
+        })
+
+        // this.$router.push('/dashboard')
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
+    },
+    async validations () {
+      if (this.username === '' || this.username.length <= 0) {
+        throw new Error('El nombre de usuario es requerido')
+      }
+
+      if (this.password === '' || this.password.length <= 0) {
+        throw new Error('La contraseña es requerida')
+      }
+
+      if (this.password.length < 8) {
+        throw new Error('La contraseña debe tener mas de 8 carácteres')
+      }
+
+      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%/*?&])[A-Za-z\d@$!%/*?&]{8,}$/.test(this.password)) {
+        throw new Error('La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial')
+      }
+     
+      return true
+    },
+  }
 }
 </script>
 <style scoped>

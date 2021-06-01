@@ -10,7 +10,7 @@ import Notifications from 'vue-notification'
 Vue.use(Notifications)
 Vue.config.productionTip = false
 
-const url = 'http://localhost:8000/api/'
+const url = 'http://3.88.239.123/api/'
 const axiosInstance = Axios.create({
   baseURL: url
   // baseURL: 'http://192.168.42.49:3002/api/'

@@ -1,5 +1,6 @@
 <template>
   <v-row id="register-layout" class="d-flex justify-center">
+    <Loader v-bind:visible="loading" />
     <v-col cols="4">
       <v-card
         class="mx-auto register-card"
@@ -87,10 +88,11 @@
   </v-row>
 </template>
 <script>
+import Loader from '../components/Loader.vue'
 export default {
   name: 'Login',
   components: {
-
+    Loader
   },
   data: () => ({
     username: '',
@@ -106,23 +108,23 @@ export default {
     operator:'',
     operatorsList:[
       {
-        id: '58414',
+        id: '414',
         name: '0414'
       },
       {
-        id: '58424',
+        id: '424',
         name: '0424'
       },
       {
-        id: '58412',
+        id: '412',
         name: '0412'
       },
       {
-        id: '58416',
+        id: '416',
         name: '0416'
       },
       {
-        id: '58426',
+        id: '426',
         name: '0426'
       },
     ],
@@ -148,30 +150,41 @@ export default {
 
         await this.validations()
 
-        this.$notify({
-          title: 'Important message',
-          text: 'Hello user!',
-          type: 'success'
-        })
-
-        return
+        this.loading = true
 
         // validaciones 
-        const test = await this.$axios.post('registeruser', {
-          'username': this.username,
+        const register = await this.$axios.post('register', {
+          'name': this.username,
           'email': this.email,
+          'phonenumber': this.operator + this.phoneNumber,
           'password': this.password
         })
 
-        // instalar beta para alertas que no sea sweet alert
+        this.loading = false
 
-        console.log(test)
-      } catch (error) {
         this.$notify({
-          title: 'Error',
-          text: error.message,
-          type: 'error'
+          title: 'Exito',
+          text: register.data.data,
+          type: 'success'
         })
+
+        this.$router.push('/')
+
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
       }
     },
     async validations () {
