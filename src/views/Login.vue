@@ -2,7 +2,7 @@
   <v-row class="d-flex justify-center">
     <v-col cols="4">
       <v-card
-        class="mx-auto login-card"
+        class=  "mx-auto login-card"
       >
         <v-card-title class="justify-center">Inicio de sesión</v-card-title>
         <v-card-text>
@@ -36,7 +36,7 @@
           </v-row>
           <v-row class="justify-center">
             <v-col cols="4">
-              <v-btn>Iniciar Sesión</v-btn>
+              <v-btn @click="login()">Iniciar Sesión</v-btn>
             </v-col>
             <br>
           </v-row>
@@ -48,6 +48,7 @@
   </v-row>
 </template>
 <script>
+import cookies from 'js-cookie'
 export default {
   name: 'Login',
   components: {
@@ -86,6 +87,9 @@ export default {
           'username': this.username,
           'password': this.password
         })
+        cookies.set('userToken', login.data.access_token)
+        this.$router.push({ name: 'Home' })
+
 
         this.loading = false
 
