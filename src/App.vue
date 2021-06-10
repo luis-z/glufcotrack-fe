@@ -1,14 +1,13 @@
 <template>
   <v-app>
-    <notifications position="top center" width="600px"/>
+    <notifications position="top center" width="600px" />
     <v-app-bar
       app
-      style="background: linear-gradient(90deg,#141b32,#3b466c 48%,#141b32);"
+      style="background: linear-gradient(90deg, #141b32, #3b466c 48%, #141b32)"
       dark
       :flat="currentRouteName == 'Register' || currentRouteName == 'Login'"
     >
       <div class="d-flex align-center">
-
         <v-img
           alt="Vuetify Name"
           class="shrink mt-1 hidden-sm-and-down"
@@ -16,57 +15,95 @@
           min-width="150"
           src="../src/assets/bg-header.png"
           width="150"
-          style="cursor:pointer"
+          style="cursor: pointer"
           @click="goHome()"
         />
       </div>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        text
-        v-show="currentRouteName !== 'Register'"
-        @click="goRegister()"
-      >
-        <span class="mr-2" >Registro</span>
-        <v-icon>mdi-open-in-new</v-icon>
-      </v-btn>
+      <div v-if="!currentUser">
+        <v-btn
+          v-if="currentRouteName == 'Home'"
+          text
+          v-show="currentRouteName !== 'Home'"
+          @click="goRegister()"
+        >
+          <span class="mr-2">Cerrar sesion</span>
+          <v-icon>mdi-open-in-new</v-icon>
+        </v-btn>
+        <v-btn
+          else
+          text
+          v-show="currentRouteName !== 'Register'"
+          @click="goRegister()"
+        >
+          <span class="mr-2">Registro</span>
+          <v-icon>mdi-open-in-new</v-icon>
+        </v-btn>
+      </div>
+      <div v-if="currentUser">
+        <v-btn text nuxt to="/home">
+          <span class="mr-2">Dashboard</span>
+        </v-btn>
+        <v-btn text @click.prevent="logOut">
+          <span class="mr-2">Logout</span>
+        </v-btn>
+      </div>
     </v-app-bar>
 
     <v-main>
       <v-container fluid>
-        <router-view/>
+        <router-view />
       </v-container>
     </v-main>
   </v-app>
 </template>
 
 <script>
-
 export default {
-  name: 'App',
+  name: "App",
 
-  data: () => ({
-
-  }),
+  data: () => ({}),
   computed: {
     currentRouteName() {
       return this.$route.name;
-    }
+    },
+    currentUser() {
+      return this.$store.state.auth.user;
+    },
+    showAdminBoard() {
+      if (this.currentUser && this.currentUser["roles"]) {
+        return this.currentUser["roles"].includes("ROLE_ADMIN");
+      }
+
+      return false;
+    },
+    showModeratorBoard() {
+      if (this.currentUser && this.currentUser["roles"]) {
+        return this.currentUser["roles"].includes("ROLE_MODERATOR");
+      }
+
+      return false;
+    },
   },
   methods: {
-    goHome () {
-      this.$router.push('/')
+    goHome() {
+      this.$router.push("/");
+    },
+    logOut() {
+      this.$store.dispatch("auth/logout");
+      this.$router.push("/");
     },
     goRegister() {
-      this.$router.push('/registro')
-    }
-  }
-}
+      this.$router.push("/registro");
+    },
+  },
+};
 </script>
 <style>
 .v-main {
-  background: linear-gradient(90deg,#141b32,#3b466c 48%,#141b32);
+  background: linear-gradient(90deg, #141b32, #3b466c 48%, #141b32);
 }
 
 .vue-notification {

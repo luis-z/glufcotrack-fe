@@ -1,21 +1,19 @@
 <template>
   <v-row class="d-flex justify-center">
     <v-col cols="4">
-      <v-card
-        class=  "mx-auto login-card"
-      >
+      <v-card class="mx-auto login-card">
         <v-card-title class="justify-center">Inicio de sesión</v-card-title>
         <v-card-text>
           <v-row class="d-flex justify-center ma-6">
             <v-col cols="10">
               <v-text-field
                 :disabled="sended"
-                v-model="username"
-                :rules="usernameRules"
+                v-model="email"
+                :rules="emailRules"
                 :loading="loading"
                 v-on:keyup.enter="onEnter"
                 :autofocus="true"
-                label="Usuario"
+                label="Email"
                 required
               ></v-text-field>
             </v-col>
@@ -38,106 +36,155 @@
             <v-col cols="4">
               <v-btn @click="login()">Iniciar Sesión</v-btn>
             </v-col>
-            <br>
+            <br />
           </v-row>
         </v-card-text>
-
       </v-card>
-
     </v-col>
   </v-row>
 </template>
 <script>
-import cookies from 'js-cookie'
+import cookies from "js-cookie";
 export default {
-  name: 'Login',
-  components: {
-
-  },
+  name: "Login",
+  components: {},
   data: () => ({
-    username: '',
-    password: '',
-    error: '',
+    email: "",
+    password: "",
+    error: "",
     loading: false,
-    message: '',
+    message: "",
     sended: false,
     show1: false,
-    usernameRules: [
-      v => !!v || 'El nombre de usuario es requerido',
-      v => (v && v.length <= 10) || 'Máximo 10 carácteres'
+    emailRules: [
+      (v) => !!v || "El email es requerido",
+      (v) => /.+@.+\..+/.test(v) || "El correo debe ser válido",
     ],
     passwordRules: [
-      v => !!v || 'La contraseña es requerida',
-      v => (v && v.length >= 8) || 'Mínimo 8 carácteres'
-    ]
+      (v) => !!v || "La contraseña es requerida",
+      (v) => (v && v.length >= 8) || "Mínimo 8 carácteres",
+    ],
   }),
   methods: {
-    async onEnter () {
-      await this.login()
+    async onEnter() {
+      await this.login();
     },
-    async login () {
+    // async login() {
+    //   try {
+    //     // await this.validations();
+
+    //     // this.loading = true;
+
+    //     // validaciones
+    //     // const login = await this.$axios.post("login", {
+    //     //   email: this.email,
+    //     //   password: this.password,
+    //     // });
+    //     // console.log(login);
+    //     // cookies.set("userToken", login.data.data.access_token);
+    //     // this.$router.push({ name: "Home" });
+
+    //     this.loading = false;
+
+    //     this.$notify({
+    //       title: "Exito",
+    //       text: login.data.data,
+    //       type: "success",
+    //     });
+
+    //     // this.$router.push('/dashboard')
+    //   } catch (error) {
+    //     this.loading = false;
+    //     if (error.response) {
+    //       this.$notify({
+    //         title: "Error",
+    //         text: error.response.data.data,
+    //         type: "error",
+    //       });
+    //     } else {
+    //       this.$notify({
+    //         title: "Error",
+    //         text: error.message,
+    //         type: "error",
+    //       });
+    //     }
+    //   }
+    // },
+    async login() {
       try {
+        await this.validations();
+        this.loading = true;
 
-        await this.validations()
+        let user = {
+          email: this.email,
+          password: this.password,
+        };
 
-        this.loading = true
+        let result = await this.$store.dispatch("auth/login", user);
+        console.log("result :>> ", result);
+        this.$router.push("/home");
 
-        // validaciones 
-        const login = await this.$axios.post('login', {
-          'username': this.username,
-          'password': this.password
-        })
-        cookies.set('userToken', login.data.access_token)
-        this.$router.push({ name: 'Home' })
-
-
-        this.loading = false
+        this.loading = false;
 
         this.$notify({
-          title: 'Exito',
+          title: "Exito",
           text: login.data.data,
-          type: 'success'
-        })
-
-        // this.$router.push('/dashboard')
+          type: "success",
+        });
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error",
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error",
+          });
         }
       }
     },
-    async validations () {
-      if (this.username === '' || this.username.length <= 0) {
-        throw new Error('El nombre de usuario es requerido')
+    async validations() {
+      if (this.email === "" || this.email.length <= 0) {
+        throw new Error("El nombre de usuario es requerido");
       }
 
-      if (this.password === '' || this.password.length <= 0) {
-        throw new Error('La contraseña es requerida')
+      if (this.password === "" || this.password.length <= 0) {
+        throw new Error("La contraseña es requerida");
       }
 
       if (this.password.length < 8) {
-        throw new Error('La contraseña debe tener mas de 8 carácteres')
+        throw new Error("La contraseña debe tener mas de 8 carácteres");
       }
 
-      if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%/*?&])[A-Za-z\d@$!%/*?&]{8,}$/.test(this.password)) {
-        throw new Error('La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial')
+      if (
+        !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%/*?&])[A-Za-z\d@$!%/*?&]{8,}$/.test(
+          this.password
+        )
+      ) {
+        throw new Error(
+          "La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
+        );
       }
-     
-      return true
+
+      return true;
     },
-  }
-}
+  },
+  computed: {
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
+    },
+  },
+  created() {
+    if (this.loggedIn) {
+      this.$router.push("/home");
+    }
+  },
+};
 </script>
 <style scoped>
 .login-card {
