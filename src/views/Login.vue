@@ -127,8 +127,8 @@ export default {
         this.loading = false;
 
         this.$notify({
-          title: "Exito",
-          text: login.data.data,
+          title: "Login Exitoso",
+          text: "",
           type: "success",
         });
       } catch (error) {
