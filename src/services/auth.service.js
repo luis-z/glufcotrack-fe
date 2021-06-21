@@ -12,15 +12,14 @@ class AuthService {
       })
       .then(response => {
 
-        if (response.data.code == 8) {
-          return
-        }
         if (response.data.data.access_token) {
           cookie.set('userToken', response.data.data.access_token);
-
         }
 
         return response.data;
+      })
+      .catch(err => {
+        throw new Error(err.response.data.data);
       });
   }
 

@@ -84,8 +84,8 @@ export default {
         this.loading = false;
 
         this.$notify({
-          title: "Exito",
-          text: "se ha iniciado sesion correctamente",
+          title: "Login Exitoso",
+          text: "",
           type: "success",
         });
       } catch (error) {
