@@ -45,8 +45,9 @@
                 :items="operatorsList"
                 label="Operadora"
                 v-model="operator"
+                :rules="operadorRules"
                 item-text="name"
-                item-value="id"
+                item-value="name"
               ></v-select>
             </v-col>
             <v-col cols="3">
@@ -85,6 +86,29 @@
                 @click:append="show1 = !show1"
               ></v-text-field>
             </v-col>
+            <v-col cols="5">
+              <v-select
+                :items="tipo_documento_list"
+                label="Tipo de documento"
+                :rules="tiponumeroDocumentoRules"
+                v-model="tipo_documento"
+                item-text="name"
+                item-value="id"
+              ></v-select>
+            </v-col>
+            <v-col cols="5">
+              <v-text-field
+                :disabled="sended"
+                v-model="numero_documento"
+                :rules="numeroDocumentoRules"
+                :loading="loading"
+                v-on:keyup.enter="onEnter"
+                :autofocus="true"
+                @keypress="isNumber()"
+                label="Numero de documento"
+                required
+              ></v-text-field>
+            </v-col>
           </v-row>
           <v-row class="justify-center">
             <v-col cols="4">
@@ -109,6 +133,22 @@ export default {
     lastname: "",
     password: "",
     passwordConfirm: "",
+    tipo_documento: "",
+    numero_documento: "",
+    tipo_documento_list: [
+      {
+        id: "V",
+        name: "Venezolano",
+      },
+      {
+        id: "E",
+        name: "Extranjero",
+      },
+      {
+        id: "P",
+        name: "Pasaporte",
+      },
+    ],
     email: "",
     error: "",
     loading: false,
@@ -147,6 +187,15 @@ export default {
       (v) => !!v || "El apellido es requerido",
       (v) => (v && v.length <= 10) || "Máximo 10 carácteres",
     ],
+    numeroDocumentoRules: [
+      (v) => !!v || "El numero de documento es requerido es requerido",
+    ],
+    tiponumeroDocumentoRules: [
+      (v) => !!v || "El tipo de documento es requerido es requerido",
+    ],
+    operadorRules: [
+      (v) => !!v || "El operador es requerido es requerido es requerido",
+    ],
     passwordRules: [
       (v) => !!v || "La contraseña es requerida",
       (v) => (v && v.length >= 8) || "Mínimo 8 carácteres",
@@ -168,9 +217,12 @@ export default {
 
         // validaciones
         const register = await this.$axios.post("register", {
-          name: this.name,
           email: this.email,
-          phonenumber: this.operator + this.phoneNumber,
+          nombre: this.name,
+          apellido: this.lastname,
+          numero_telefono: this.operator + this.phoneNumber,
+          tipo_documento: this.tipo_documento,
+          numero_documento: this.numero_documento,
           password: this.password,
         });
 
