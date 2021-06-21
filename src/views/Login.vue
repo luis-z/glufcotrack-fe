@@ -44,7 +44,6 @@
   </v-row>
 </template>
 <script>
-import cookies from "js-cookie";
 export default {
   name: "Login",
   components: {},
@@ -69,47 +68,6 @@ export default {
     async onEnter() {
       await this.login();
     },
-    // async login() {
-    //   try {
-    //     // await this.validations();
-
-    //     // this.loading = true;
-
-    //     // validaciones
-    //     // const login = await this.$axios.post("login", {
-    //     //   email: this.email,
-    //     //   password: this.password,
-    //     // });
-    //     // console.log(login);
-    //     // cookies.set("userToken", login.data.data.access_token);
-    //     // this.$router.push({ name: "Home" });
-
-    //     this.loading = false;
-
-    //     this.$notify({
-    //       title: "Exito",
-    //       text: login.data.data,
-    //       type: "success",
-    //     });
-
-    //     // this.$router.push('/dashboard')
-    //   } catch (error) {
-    //     this.loading = false;
-    //     if (error.response) {
-    //       this.$notify({
-    //         title: "Error",
-    //         text: error.response.data.data,
-    //         type: "error",
-    //       });
-    //     } else {
-    //       this.$notify({
-    //         title: "Error",
-    //         text: error.message,
-    //         type: "error",
-    //       });
-    //     }
-    //   }
-    // },
     async login() {
       try {
         await this.validations();
@@ -121,14 +79,13 @@ export default {
         };
 
         let result = await this.$store.dispatch("auth/login", user);
-        console.log("result :>> ", result);
         this.$router.push("/home");
 
         this.loading = false;
 
         this.$notify({
           title: "Exito",
-          text: login.data.data,
+          text: "se ha iniciado sesion correctamente",
           type: "success",
         });
       } catch (error) {
