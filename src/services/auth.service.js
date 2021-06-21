@@ -1,7 +1,10 @@
+require('dotenv').config()
 import axios from 'axios';
 import cookie from 'js-cookie'
+import authHeader from './auth-header';
 
-const API_URL = 'http://3.88.239.123/api/';
+// const API_URL = 'http://3.88.239.123/api/';
+const API_URL = process.env.VUE_APP_API
 
 class AuthService {
   login(user) {
@@ -14,8 +17,20 @@ class AuthService {
 
         if (response.data.data.access_token) {
           cookie.set('userToken', response.data.data.access_token);
+          authHeader()
         }
 
+        return response.data;
+      })
+      .catch(err => {
+        throw new Error(err.response.data.data);
+      });
+  }
+
+  userData () {
+    return axios
+      .post(API_URL + 'userdata')
+      .then(response => {
         return response.data;
       })
       .catch(err => {

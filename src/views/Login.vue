@@ -120,8 +120,9 @@ export default {
           password: this.password,
         };
 
-        let result = await this.$store.dispatch("auth/login", user);
-        console.log("result :>> ", result);
+        let result = await this.$store.dispatch("auth/login", user)
+
+        let userData = await this.$store.dispatch("auth/userData")
         this.$router.push("/home");
 
         this.loading = false;
