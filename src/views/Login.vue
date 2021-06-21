@@ -79,6 +79,8 @@ export default {
         };
 
         let result = await this.$store.dispatch("auth/login", user);
+
+        let userData = await this.$store.dispatch("auth/userData");
         this.$router.push("/home");
 
         this.loading = false;

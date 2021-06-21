@@ -1,24 +1,38 @@
 <template>
   <v-row id="register-layout" class="d-flex justify-center">
     <Loader v-bind:visible="loading" />
-    <v-col cols="4">
+    <v-col cols="8">
       <v-card class="mx-auto register-card">
         <v-card-title class="justify-center">Registro de usuario</v-card-title>
         <v-card-text>
           <v-row class="d-flex justify-center ma-2">
-            <v-col cols="10">
+            <v-col cols="5">
               <v-text-field
                 :disabled="sended"
-                v-model="username"
-                :rules="usernameRules"
+                v-model="name"
+                :rules="nameRules"
                 :loading="loading"
                 v-on:keyup.enter="onEnter"
                 :autofocus="true"
-                label="Nombre de Usuario"
+                label="Nombre"
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="10">
+            <v-col cols="5">
+              <v-text-field
+                :disabled="sended"
+                v-model="lastname"
+                :rules="lastnameRules"
+                :loading="loading"
+                v-on:keyup.enter="onEnter"
+                :autofocus="true"
+                label="Apellido"
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row class="d-flex justify-center ma-2">
+            <v-col cols="5">
               <v-text-field
                 v-model="email"
                 label="Correo"
@@ -26,7 +40,7 @@
                 v-on:keyup.enter="onEnter"
               ></v-text-field>
             </v-col>
-            <v-col cols="4">
+            <v-col cols="2">
               <v-select
                 :items="operatorsList"
                 label="Operadora"
@@ -35,7 +49,7 @@
                 item-value="id"
               ></v-select>
             </v-col>
-            <v-col cols="6">
+            <v-col cols="3">
               <v-text-field
                 label="Número de teléfono"
                 v-model="phoneNumber"
@@ -43,7 +57,7 @@
                 maxlength="7"
               ></v-text-field>
             </v-col>
-            <v-col cols="10">
+            <v-col cols="5">
               <v-text-field
                 :disabled="sended"
                 v-model="password"
@@ -57,7 +71,7 @@
                 @click:append="show1 = !show1"
               ></v-text-field>
             </v-col>
-            <v-col cols="10">
+            <v-col cols="5">
               <v-text-field
                 :disabled="sended"
                 label="Confirmar la Contraseña"
@@ -91,7 +105,8 @@ export default {
     Loader,
   },
   data: () => ({
-    username: "",
+    name: "",
+    lastname: "",
     password: "",
     passwordConfirm: "",
     email: "",
@@ -124,8 +139,12 @@ export default {
         name: "0426",
       },
     ],
-    usernameRules: [
-      (v) => !!v || "El nombre de usuario es requerido",
+    nameRules: [
+      (v) => !!v || "El nombre es requerido",
+      (v) => (v && v.length <= 10) || "Máximo 10 carácteres",
+    ],
+    lastnameRules: [
+      (v) => !!v || "El apellido es requerido",
       (v) => (v && v.length <= 10) || "Máximo 10 carácteres",
     ],
     passwordRules: [
@@ -149,7 +168,7 @@ export default {
 
         // validaciones
         const register = await this.$axios.post("register", {
-          name: this.username,
+          name: this.name,
           email: this.email,
           phonenumber: this.operator + this.phoneNumber,
           password: this.password,
@@ -182,7 +201,7 @@ export default {
       }
     },
     async validations() {
-      if (this.username === "" || this.username.length <= 0) {
+      if (this.name === "" || this.name.length <= 0) {
         throw new Error("El nombre de usuario es requerido");
       }
 

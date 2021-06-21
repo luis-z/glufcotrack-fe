@@ -1,3 +1,4 @@
+require('dotenv').config()
 import Vue from 'vue'
 import Vuex from 'vuex'
 import Axios from 'axios'
@@ -10,7 +11,7 @@ import Notifications from 'vue-notification'
 Vue.use(Notifications)
 Vue.config.productionTip = false
 
-const url = 'http://3.88.239.123/api/'
+const url = process.env.VUE_APP_API
 const axiosInstance = Axios.create({
   baseURL: url
   // baseURL: 'http://192.168.42.49:3002/api/'
