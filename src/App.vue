@@ -85,7 +85,7 @@ export default {
       }
 
       return false;
-    },
+    }
   },
   methods: {
     goHome() {
@@ -97,11 +97,16 @@ export default {
     },
     goRegister() {
       this.$router.push("/registro");
-    },
-  },
+    }
+  }
 };
 </script>
-<style>
+<style lang="scss">
+@import "~sweetalert2/src/variables";
+
+$swal2-background: #990000;
+
+@import "~sweetalert2/src/sweetalert2";
 .v-main {
   background: linear-gradient(90deg, #141b32, #3b466c 48%, #141b32);
 }
