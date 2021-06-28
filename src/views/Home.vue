@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <Loader v-bind:visible="loading" />
-    <component :is="component"/>
+    <component :is="component" @userData="userData"/>
   </v-container>
 </template>
 <script>
@@ -45,7 +45,7 @@ export default {
       if (!this.currentUser.email_verificado) {
         console.log('CORREO SIN VERIFICAR');
         this.component = EmailVerification
-        // return
+        return
       }
 
       if (!this.currentUser.celular.verificado) {

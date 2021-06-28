@@ -21,6 +21,7 @@
               outlined
               @keypress="isNumber($event)"
               maxlength="5"
+              v-on:keyup.enter="confirmToken"
             ></v-text-field>
           </v-col>
           <v-col cols="2">
@@ -60,15 +61,88 @@ export default {
   methods: {
     async resend () {
       console.log('resend');
+      this.loading = true
       try {
         const sended = await this.$axios.post('reenviarsmsverificacion')
         console.log(sended)
+        this.loading = false
+        this.$notify({
+          title: "Reenvio Exitoso",
+          text: "",
+          type: "success",
+        });
       } catch (error) {
         console.log(error.response.data)
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: "Error",
+            text: error.response.data.data,
+            type: "error",
+          });
+        } else {
+          this.$notify({
+            title: "Error",
+            text: error.message,
+            type: "error",
+          });
+        }
       }
     },
     async confirmToken() {
       console.log('confirm token');
+
+      if (this.token == '' || this.token.length <= 0) {
+        this.$notify({
+          title: "Error",
+          text: "El código es requerido.",
+          type: "error",
+        });
+
+        return
+      }
+
+      if (this.token.length !== 5) {
+        this.$notify({
+          title: "Error",
+          text: "El código debe tener 5 dígitos.",
+          type: "error",
+        });
+        return
+      }
+
+      this.loading = true
+      try {
+        const body = {
+          token: this.token
+        }
+        const sended = await this.$axios.post('verificarnumerotelefono', body)
+        console.log(sended)
+        this.$emit('userData')
+        // this.loading = false
+        this.$notify({
+          title: "Confimación Exitosa",
+          text: "",
+          type: "success",
+        });
+
+      } catch (error) {
+        console.log(error.response.data)
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: "Error",
+            text: error.response.data.data,
+            type: "error",
+          });
+        } else {
+          this.$notify({
+            title: "Error",
+            text: error.message,
+            type: "error",
+          });
+        }
+      }
     },
     isNumber: function (evt) {
       evt = evt ? evt : window.event;
