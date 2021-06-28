@@ -10,6 +10,7 @@ import Notifications from "vue-notification";
 import VueSweetalert2 from "vue-sweetalert2";
 import "sweetalert2/dist/sweetalert2.min.css";
 import "./assets/index.scss";
+import cookie from 'js-cookie'
 
 Vue.use(VueSweetalert2);
 
@@ -17,10 +18,16 @@ Vue.use(Notifications);
 Vue.config.productionTip = false;
 
 const url = process.env.VUE_APP_API;
+const token = cookie.get('userToken');
 const axiosInstance = Axios.create({
-  baseURL: url
+  baseURL: url,
   // baseURL: 'http://192.168.42.49:3002/api/'
   // withCredentials: true,
+  headers: {
+    common: {
+      Authorization: 'Bearer ' + token
+    }
+  }
 });
 
 axiosInstance.interceptors.response.use(
@@ -28,15 +35,15 @@ axiosInstance.interceptors.response.use(
   error => {
     // whatever you want to do with the error
 
-    if (error.response.data.message === "BLOCKED") {
-      Axios.post(url + "logout", {
-        log_id: store.state.user.log_id
-      }).then(response => {
-        store.dispatch("logout");
+    // if (error.response.data.message === "BLOCKED") {
+    //   Axios.post(url + "logout", {
+    //     log_id: store.state.user.log_id
+    //   }).then(response => {
+    //     store.dispatch("logout");
 
-        router.push("/login");
-      });
-    }
+    //     router.push("/login");
+    //   });
+    // }
 
     throw error;
   }

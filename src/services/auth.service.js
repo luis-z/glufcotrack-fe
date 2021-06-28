@@ -28,10 +28,12 @@ class AuthService {
   }
 
   userData () {
+    authHeader()
     return axios
       .post(API_URL + 'userdata')
       .then(response => {
-        return response.data;
+        cookie.set('userData', response.data.data);
+        return response.data.data;
       })
       .catch(err => {
         throw new Error(err.response.data.data);
@@ -40,6 +42,7 @@ class AuthService {
 
   logout() {
     cookie.remove('userToken');
+    cookie.remove('userData');
   }
 
   register(user) {

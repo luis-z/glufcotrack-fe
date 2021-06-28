@@ -1,13 +1,16 @@
 import AuthService from '../services/auth.service';
 import cookie from 'js-cookie'
 
-const user = cookie.get('userToken');
+const initialState = () => {
+  const userInfo = cookie.get('userData');
 
-
-
-const initialState = user
-  ? { status: { loggedIn: true }, user, }
-  : { status: { loggedIn: false }, user: null, };
+  if (userInfo) {
+    let formatted = JSON.parse(userInfo)
+    return { status: { loggedIn: true }, user: formatted, }
+  } else {
+    return { status: { loggedIn: false }, user: null, }
+  }
+}
 
 export const auth = {
   namespaced: true,
@@ -26,12 +29,15 @@ export const auth = {
       );
     },
     userData({ commit }) {
+      console.log(Date.now());
       return AuthService.userData().then(
         userData => {
           commit('userDataSuccess', userData);
           return Promise.resolve(userData);
         },
         error => {
+          AuthService.logout();
+          commit('logout');
           commit('loginFailure');
           return Promise.reject(error);
         }

@@ -78,10 +78,10 @@ export default {
           password: this.password,
         };
 
-        let result = await this.$store.dispatch("auth/login", user);
+        await this.$store.dispatch("auth/login", user);
 
-        let userData = await this.$store.dispatch("auth/userData");
-        this.$router.push("/home");
+        await this.$store.dispatch("auth/userData");
+        this.$router.push("/inicio");
 
         this.loading = false;
 
@@ -140,7 +140,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push("/home");
+      this.$router.push("/inicio");
     }
   },
 };
