@@ -10,7 +10,7 @@
             <template>
               <v-data-table
                 :headers="headers"
-                :items="desserts"
+                :items="ordenes"
                 :items-per-page="5"
                 class="elevation-1"
               >
@@ -33,6 +33,7 @@
 <script>
 import UserService from "@/services/user.service";
 import Loader from "@/components/Loader.vue";
+import headers from '@/services/auth-header';
 
 export default {
   name: "UserDashboard",
@@ -43,20 +44,12 @@ export default {
     return {
       loading: false,
       headers: [
-        {
-          text: "Dessert (100g serving)",
-          align: "start",
-          sortable: false,
-          value: "name"
-        },
-        { text: "Calories", value: "calories" },
-        { text: "Fat (g)", value: "fat" },
-        { text: "Carbs (g)", value: "carbs" },
-        { text: "Protein (g)", value: "protein" },
-        { text: "Iron (%)", value: "iron" },
-        { text: "Actions", value: "actions", sortable: false }
+        { text: "ID", value: "calories" },
+        { text: "Destino", value: "fat" },
+        { text: "Estatus", value: "carbs" },
+        { text: "Trabajador Asignado", value: "protein" }
       ],
-      desserts: [
+      ordenes: [
         {
           name: "Frozen Yogurt",
           calories: 159,
@@ -141,8 +134,35 @@ export default {
     };
   },
   mounted() {
+    this.loadOrdenes()
   },
   methods: {
+    async loadOrdenes() {
+      try {
+        headers()
+        this.loading = true
+        const ordenes = await this.$axios.post('/ordenes/index', {
+          cliente_id: this.$store.state.auth.user.cliente.id
+        })
+        this.lotes = ordenes.data.data
+        this.loading = false
+      } catch (error) {
+        this.loading = false;
+        if (error.response) {
+          this.$notify({
+            title: "Error",
+            text: error.response.data.data,
+            type: "error",
+          });
+        } else {
+          this.$notify({
+            title: "Error",
+            text: error.message,
+            type: "error",
+          });
+        }
+      }
+    },
     async deleteOrden(name) {
       console.log("delete orden", name);
       this.$swal

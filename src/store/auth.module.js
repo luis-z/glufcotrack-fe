@@ -17,7 +17,7 @@ export const auth = {
   state: initialState,
   actions: {
     login({ commit }, user) {
-      return AuthService.login(user).then(
+      return AuthService.login(user, this.$axios).then(
         user => {
           commit('loginSuccess');
           return Promise.resolve(user);
@@ -29,8 +29,8 @@ export const auth = {
       );
     },
     userData({ commit }) {
-      console.log(Date.now());
-      return AuthService.userData().then(
+      // console.log(Date.now());
+      return AuthService.userData(this.$axios).then(
         userData => {
           commit('userDataSuccess', userData);
           return Promise.resolve(userData);
@@ -45,6 +45,7 @@ export const auth = {
     },
     logout({ commit }) {
       AuthService.logout();
+      this.$axios.defaults.headers.common['Authorization'] = null
       commit('logout');
     },
     register({ commit }, user) {

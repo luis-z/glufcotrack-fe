@@ -34,27 +34,39 @@ export default {
   },
   methods: {
     async userData () {
-      await this.$store.dispatch("auth/userData");
-      this.loading = false
+      try {
+        await this.$store.dispatch("auth/userData");
+        this.loading = false
 
-      if (!this.currentUser) {
+        if (!this.currentUser) {
+          this.$router.push("/");
+          return
+        }
+  
+        if (!this.currentUser.email_verificado) {
+          console.log('CORREO SIN VERIFICAR');
+          this.component = EmailVerification
+          return
+        }
+  
+        if (!this.currentUser.celular.verificado) {
+          console.log('CELULAR SIN VERIFICAR');
+          this.component = PhoneVerification
+          return
+        }
+
+        if (this.currentUser) {
+          this.component = UserDashboard
+        }
+    
+      } catch (error) {
+        this.$notify({
+          title: "Error",
+          text: error.message,
+          type: "error",
+        });
         this.$router.push("/");
-        return
       }
-
-      if (!this.currentUser.email_verificado) {
-        console.log('CORREO SIN VERIFICAR');
-        this.component = EmailVerification
-        return
-      }
-
-      if (!this.currentUser.celular.verificado) {
-        console.log('CELULAR SIN VERIFICAR');
-        this.component = PhoneVerification
-        return
-      }
-
-      this.component = UserDashboard
     }
   }
 };

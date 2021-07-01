@@ -43,9 +43,16 @@
         </v-btn>
       </div>
       <div v-if="currentUser">
-        <v-btn text nuxt to="/home">
-          <span class="mr-2">Dashboard</span>
-        </v-btn>
+        <router-link to="/inicio">
+          <v-btn text>
+            <span class="mr-2">Dashboard</span>
+          </v-btn>
+        </router-link>
+        <router-link to="/ubicacion">
+          <v-btn text>
+            <span class="mr-2">Mis Ubicaciones</span>
+          </v-btn>
+        </router-link>
         <v-btn text @click.prevent="logOut">
           <span class="mr-2">Logout</span>
         </v-btn>

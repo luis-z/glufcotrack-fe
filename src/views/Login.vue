@@ -34,7 +34,7 @@
           </v-row>
           <v-row class="justify-center">
             <v-col cols="4">
-              <v-btn @click="login()">Iniciar Sesión</v-btn>
+              <v-btn @click="login()" :loading="loading">Iniciar Sesión</v-btn>
             </v-col>
             <br />
           </v-row>

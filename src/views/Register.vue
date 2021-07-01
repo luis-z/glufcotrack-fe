@@ -25,7 +25,6 @@
                 :rules="lastnameRules"
                 :loading="loading"
                 v-on:keyup.enter="onEnter"
-                :autofocus="true"
                 label="Apellido"
                 required
               ></v-text-field>
@@ -103,7 +102,6 @@
                 :rules="numeroDocumentoRules"
                 :loading="loading"
                 v-on:keyup.enter="onEnter"
-                :autofocus="true"
                 @keypress="isNumber()"
                 label="Numero de documento"
                 required

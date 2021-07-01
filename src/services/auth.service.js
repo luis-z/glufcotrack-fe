@@ -7,8 +7,8 @@ import authHeader from './auth-header';
 const API_URL = process.env.VUE_APP_API
 
 class AuthService {
-  login(user) {
-    return axios
+  login(user,axiosInstance) {
+    return axiosInstance
       .post(API_URL + 'login', {
         email: user.email,
         password: user.password
@@ -17,7 +17,7 @@ class AuthService {
 
         if (response.data.data.access_token) {
           cookie.set('userToken', response.data.data.access_token);
-          authHeader()
+          axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + response.data.data.access_token
         }
 
         return response.data;
@@ -27,16 +27,16 @@ class AuthService {
       });
   }
 
-  userData () {
-    authHeader()
-    return axios
-      .post(API_URL + 'userdata')
+  userData (axiosInstance) {
+    // authHeader()
+    return axiosInstance
+      .post('userdata')
       .then(response => {
-        cookie.set('userData', response.data.data);
+        cookie.set('userData', response.data.data); 
         return response.data.data;
       })
       .catch(err => {
-        throw new Error(err.response.data.data);
+        throw new Error('Debe iniciar sesión.');
       });
   }
 

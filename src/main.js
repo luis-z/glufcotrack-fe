@@ -23,11 +23,6 @@ const axiosInstance = Axios.create({
   baseURL: url,
   // baseURL: 'http://192.168.42.49:3002/api/'
   // withCredentials: true,
-  headers: {
-    common: {
-      Authorization: 'Bearer ' + token
-    }
-  }
 });
 
 axiosInstance.interceptors.response.use(
@@ -48,6 +43,8 @@ axiosInstance.interceptors.response.use(
     throw error;
   }
 );
+
+axiosInstance.defaults.headers.common['Authorization'] = 'Bearer ' + token
 
 Vue.prototype.$axios = axiosInstance;
 Vuex.Store.prototype.$axios = axiosInstance;
