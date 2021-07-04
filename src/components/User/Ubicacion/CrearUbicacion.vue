@@ -4,7 +4,7 @@
     <v-col cols="12">
       <v-card class="mx-auto login-card">
         <v-card-text>
-          <v-btn color="primary" @click="goToListarUbicaciones">regresar</v-btn>
+          <v-btn color="primary" @click="goToListar">regresar</v-btn>
           <v-row class="d-flex justify-center ma-6">
             <v-col cols="8">
               <div id="mapid"></div>
@@ -12,7 +12,7 @@
             <v-col cols="4">
               <v-row class="d-flex justify-center ma-6 inner-form">
                 <v-col cols="10" style="margin: 0.5rem">
-                  <h1 style="font-weight: 300">Crear Ubicación</h1>
+                  <h1 style="font-weight: 300">Registrar Dirección</h1>
                 </v-col>
                 <v-col cols="8">
                   <v-text-field
@@ -72,6 +72,9 @@ export default {
     this.setupLeafletMap()
   },
   methods: {
+    async onEnter() {
+      await this.createUbicacion();
+    },
     async createUbicacion () {
       try {
 
@@ -127,7 +130,7 @@ export default {
           type: "success",
         });
 
-        this.goToListarUbicaciones()
+        this.goToListar()
 
       } catch (error) {
         this.loading = false;
@@ -182,8 +185,8 @@ export default {
         marker = L.marker(self.coordenadas, { icon: GlufcoIcon }).addTo(mymap);
       })
     },
-    async goToListarUbicaciones() {
-      this.$emit('goToListarUbicaciones')
+    async goToListar() {
+      this.$emit('goToListar')
     }
   }
 };

@@ -4,7 +4,7 @@
       <Loader v-bind:visible="loading" />
       <v-col cols="8">
         <v-card class="mx-auto login-card">
-          <v-card-title class="justify-center">Mis Ubicaciones</v-card-title>
+          <v-card-title class="justify-center">Mis Direcciones</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="2">
@@ -12,7 +12,7 @@
                   color="primary"
                   @click="gotToCreate"
                 >
-                  Crear Ubicación
+                  Registrar Dirección
                 </v-btn>
               </v-col>
             </v-row>
@@ -68,7 +68,6 @@
   </v-container>
 </template>
 <script>
-import headers from '@/services/auth-header';
 import Loader from "@/components/Loader.vue";
 import DetalleUbicacion from "@/components/User/Ubicacion/Detalle.vue";
 
@@ -84,9 +83,8 @@ export default {
       headers: [
         { text: "ID", value: "id" },
         { text: "Apodo", value: "apodo" },
-        { text: "Dirección", value: "direccion" },
         { text: "Estatus", value: "estatus" },
-        { text: "Ubicación en el mapa", value: "map" }
+        { text: "Ubicación en el mapa", value: "map", align: 'center', }
       ],
       ubicaciones: [],
       dialog: false,
@@ -112,14 +110,15 @@ export default {
     async changeStatus(item) {
       this.selected = Object.assign({}, item)
       
-      this.selected.status = !this.selected.status
+      this.selected.estatus = !this.selected.estatus
+
       try {
         this.loading = true
-        const updated = await this.$axios.post('/ubicaciones/updatestatus', this.selected)
+        const updated = await this.$axios.post('/ubicaciones/update', this.selected)
 
         this.$notify({
           title: "Exito",
-            text: create.data.data,
+            text: updated.data.data,
             type: "success",
           });
 
@@ -150,7 +149,6 @@ export default {
     },
     async loadUbicaciones() {
       try {
-        headers()
         this.loading = true
         const ubicaciones = await this.$axios.post('/ubicaciones/index', {
           cliente_id: this.$store.state.auth.user.cliente.id

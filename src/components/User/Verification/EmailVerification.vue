@@ -17,6 +17,9 @@
               outlined
               @keypress="isNumber($event)"
               maxlength="5"
+              v-on:keyup.enter="onEnter"
+              :autofocus="true"
+              :loading="loading"
             ></v-text-field>
           </v-col>
           <v-col cols="2">
@@ -24,6 +27,7 @@
               style="margin-bottom:2rem;"
               color="primary"
               @click="confirmToken"
+              :loading="loading"
             >
               Verificar
             </v-btn>
@@ -83,6 +87,9 @@ export default {
           });
         }
       }
+    },
+    async onEnter() {
+      await this.confirmToken();
     },
     async confirmToken() {
       console.log('confirm token');

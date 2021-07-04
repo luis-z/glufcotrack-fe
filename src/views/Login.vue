@@ -81,7 +81,7 @@ export default {
         await this.$store.dispatch("auth/login", user);
 
         await this.$store.dispatch("auth/userData");
-        this.$router.push("/inicio");
+        this.$router.push("/ordenes");
 
         this.loading = false;
 
@@ -140,7 +140,7 @@ export default {
   },
   created() {
     if (this.loggedIn) {
-      this.$router.push("/inicio");
+      this.$router.push("/ordenes");
     }
   },
 };

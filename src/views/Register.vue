@@ -47,6 +47,7 @@
                 :rules="operadorRules"
                 item-text="name"
                 item-value="name"
+                :loading="loading"
               ></v-select>
             </v-col>
             <v-col cols="3">
@@ -55,6 +56,7 @@
                 v-model="phoneNumber"
                 @keypress="isNumber($event)"
                 maxlength="7"
+                :loading="loading"
               ></v-text-field>
             </v-col>
             <v-col cols="5">
@@ -93,6 +95,7 @@
                 v-model="tipo_documento"
                 item-text="name"
                 item-value="id"
+                :loading="loading"
               ></v-select>
             </v-col>
             <v-col cols="5">
@@ -110,7 +113,7 @@
           </v-row>
           <v-row class="justify-center">
             <v-col cols="4">
-              <v-btn @click="registerUser()">Registrar Usuario</v-btn>
+              <v-btn @click="registerUser()" :loading="loading">Registrar Usuario</v-btn>
             </v-col>
             <br />
           </v-row>
@@ -332,7 +335,7 @@ export default {
     },
     created() {
       if (this.loggedIn) {
-        this.$router.push("/inicio");
+        this.$router.push("/ordenes");
       }
     },
   },

@@ -4,7 +4,7 @@
     <component 
       :is="component"
       @goToCreate="goToCreate()"
-      @goToListarUbicaciones="goToListarUbicaciones()"
+      @goToListar="goToListar()"
     />
   </v-container>
 </template>
@@ -53,7 +53,7 @@ export default {
     goToCreate () {
       this.component = CrearUbicacion
     },
-    goToListarUbicaciones () {
+    goToListar () {
       this.component = ListarUbicaciones
     }
   }

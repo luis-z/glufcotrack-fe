@@ -1,47 +1,40 @@
 <template>
   <div>
-    <v-dialog
-      transition="dialog-bottom-transition"
-      max-width="800"
-      v-model="dialog"
-      @click:outside="closeDetail"
-    >
-      <template>
-        <v-card>
-          <v-toolbar
-            style="background:linear-gradient(90deg, rgb(20, 27, 50), rgb(59, 70, 108) 48%, rgb(20, 27, 50));"
-            dark
-          ><strong>"{{ubicacionData.apodo}}"</strong></v-toolbar>
-          <v-card-text>
-            <v-col cols="12">
-              <h3>Dirección:</h3>
-              <p>{{ubicacionData.direccion}}</p>
-            </v-col>
-            <v-col cols="12">
-              <div id="ubicacionDetail"></div>
-            </v-col>
-          </v-card-text>
-          <v-card-actions class="justify-end">
-            <v-btn
-              text
-              @click="closeDetail"
-            >Cerrar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </template>
-    </v-dialog>
+    <v-card>
+      <v-toolbar
+        style="background:linear-gradient(90deg, rgb(20, 27, 50), rgb(59, 70, 108) 48%, rgb(20, 27, 50));"
+        dark
+      >
+        <strong>"{{ordenData.apodo}}"</strong>
+      </v-toolbar>
+      <v-card-text>
+        <v-col cols="12">
+          <h3>Dirección:</h3>
+          <p>{{ordenData.direccion}}</p>
+        </v-col>
+        <v-col cols="12">
+          <div id="ubicacionDetail"></div>
+        </v-col>
+      </v-card-text>
+      <v-card-actions class="justify-end">
+        <v-btn
+          text
+          @click="goToListar"
+        >Cerrar</v-btn>
+      </v-card-actions>
+    </v-card>
   </div>
 </template>
 <script>
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 export default {
-  name: 'DetalleUbicacion',
+  name: 'DetalleOrden',
   components: {
   },
   props: {
     visible: Boolean,
-    ubicacionData: Object
+    ordenData: Object
   },
   data() {
     return {
@@ -50,18 +43,8 @@ export default {
     };
   },
   watch: {
-    ubicacionData: function () {
-      self = this
-      setTimeout(function(){ 
-        let coordenadas = self.ubicacionData.coordenadas.split(',')
-        console.log('coordenadas');
-        console.log(coordenadas);
-        self.marker = null
-        if (self.map.length <= 0) {
-          self.setupLeafletMap(coordenadas)
-        }
-        self.changeMarker(coordenadas)
-      }, 500);
+    ordenData: function () {
+      this.loadData()
     },
   },
   computed: {
@@ -70,9 +53,34 @@ export default {
     }
   },
   methods: {
-    closeDetail() {
+    goToListar() {
       this.map.removeLayer(this.marker);
-      this.$emit('closeDetail')
+      this.$emit('goToListar')
+    },
+    async loadData () {
+      try {
+        
+        // PENDIENTE
+        await this.$axios.post('recorridos/consultar',{
+          orden_id: this.ordenData.id
+        })
+        
+        self = this
+        setTimeout(function(){ 
+          let coordenadas = self.ordenData.coordenadas.split(',')
+          console.log('coordenadas');
+          console.log(coordenadas);
+          self.marker = null
+          if (self.map.length <= 0) {
+            self.setupLeafletMap(coordenadas)
+          }
+          self.changeMarker(coordenadas)
+        }, 500);
+        
+
+      } catch (error) {
+        
+      }
     },
     setupLeafletMap (coordenadas) {
       this.map = L.map('ubicacionDetail').setView(coordenadas, 13);

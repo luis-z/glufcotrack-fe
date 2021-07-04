@@ -30,15 +30,12 @@ axiosInstance.interceptors.response.use(
   error => {
     // whatever you want to do with the error
 
-    // if (error.response.data.message === "BLOCKED") {
-    //   Axios.post(url + "logout", {
-    //     log_id: store.state.user.log_id
-    //   }).then(response => {
-    //     store.dispatch("logout");
+    if (error.response.data.message === "Unauthenticated.") {
 
-    //     router.push("/login");
-    //   });
-    // }
+      store.dispatch("logout");
+      router.push("/login");
+
+    }
 
     throw error;
   }

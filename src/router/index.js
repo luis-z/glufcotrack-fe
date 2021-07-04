@@ -1,10 +1,10 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
-import CreateOrden from "../views/CreateOrden.vue";
-import Ubicacion from "../views/Ubicacion.vue";
+import OrdenesUsuario from "../views/User/Ordenes.vue";
+import OrdenesTrabajador from "../views/Trabajador/Ordenes.vue";
+import Ubicacion from "../views/User/Ubicacion.vue";
 import store from '../store'
 
 Vue.use(VueRouter);
@@ -15,24 +15,25 @@ const cliente = (to, from, next) => {
 
   if (!currentUser) next({ name: 'Login' })
 
-  if (!currentUser.email_verificado) next({ name: 'Home' })
+  if (!currentUser.email_verificado) next({ name: 'OrdenesUsuario' })
 
-  if (!currentUser.celular.verificado) next({ name: 'Home' })
+  if (!currentUser.celular.verificado) next({ name: 'OrdenesUsuario' })
 
   next()
 }
 
 const routes = [
   {
-    path: "/inicio",
-    name: "Home",
-    component: Home,
+    path: "/ordenes",
+    name: "OrdenesUsuario",
+    component: OrdenesUsuario,
     // beforeEnter: cliente
   },
   {
-    path: "/neworden",
-    name: "NewOrden",
-    component: CreateOrden
+    path: "/trabajador/ordenes",
+    name: "OrdenesTrabajador",
+    component: OrdenesTrabajador,
+    // beforeEnter: cliente
   },
   {
     path: "/ubicacion",

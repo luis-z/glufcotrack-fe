@@ -43,14 +43,14 @@
         </v-btn>
       </div>
       <div v-if="currentUser">
-        <router-link to="/inicio">
+        <router-link to="/ordenes">
           <v-btn text>
-            <span class="mr-2">Dashboard</span>
+            <span class="mr-2">Mis Ordenes</span>
           </v-btn>
         </router-link>
         <router-link to="/ubicacion">
           <v-btn text>
-            <span class="mr-2">Mis Ubicaciones</span>
+            <span class="mr-2">Mis Direcciones</span>
           </v-btn>
         </router-link>
         <v-btn text @click.prevent="logOut">
@@ -121,4 +121,19 @@ $swal2-background: #990000;
 .vue-notification {
   font-size: 16px;
 }
+
+@font-face {
+  font-family: "Ubuntu";
+  src: local("Ubuntu"),
+   url(./assets/fonts/Ubuntu-Light.ttf) format("truetype");
+}
+
+.swal2-title, .swal2-deny, .swal2-confirm, .swal2-cancel {
+  font-family: Ubuntu!important;
+}
+
+.v-application {
+  font-family: Ubuntu!important;
+}
+
 </style>
