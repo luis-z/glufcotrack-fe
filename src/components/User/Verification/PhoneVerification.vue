@@ -47,7 +47,7 @@
   </v-row>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
+import Loader from '@/components/Loader.vue'
 
 export default {
   name: 'PhoneVerification',
@@ -59,58 +59,58 @@ export default {
   },
   data: () => ({
     token: '',
-    loading: false,
+    loading: false
   }),
   methods: {
     async resend () {
-      console.log('resend');
+      console.log('resend')
       this.loading = true
       try {
         const sended = await this.$axios.post('reenviarsmsverificacion')
         console.log(sended)
         this.loading = false
         this.$notify({
-          title: "Reenvio Exitoso",
-          text: "",
-          type: "success",
-        });
+          title: 'Reenvio Exitoso',
+          text: '',
+          type: 'success'
+        })
       } catch (error) {
         console.log(error.response.data)
         this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
-    async confirmToken() {
-      console.log('confirm token');
+    async confirmToken () {
+      console.log('confirm token')
 
       if (this.token == '' || this.token.length <= 0) {
         this.$notify({
-          title: "Error",
-          text: "El código es requerido.",
-          type: "error",
-        });
+          title: 'Error',
+          text: 'El código es requerido.',
+          type: 'error'
+        })
 
         return
       }
 
       if (this.token.length !== 5) {
         this.$notify({
-          title: "Error",
-          text: "El código debe tener 5 dígitos.",
-          type: "error",
-        });
+          title: 'Error',
+          text: 'El código debe tener 5 dígitos.',
+          type: 'error'
+        })
         return
       }
 
@@ -124,39 +124,38 @@ export default {
         this.$emit('userData')
         // this.loading = false
         this.$notify({
-          title: "Confimación Exitosa",
-          text: "",
-          type: "success",
-        });
-
+          title: 'Confimación Exitosa',
+          text: '',
+          type: 'success'
+        })
       } catch (error) {
         console.log(error.response.data)
         this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
     isNumber: function (evt) {
-      evt = evt ? evt : window.event;
-      var charCode = evt.which ? evt.which : evt.keyCode;
+      evt = evt || window.event
+      var charCode = evt.which ? evt.which : evt.keyCode
       if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 9) {
-        evt.preventDefault();
+        evt.preventDefault()
       } else {
-        return true;
+        return true
       }
-      `enter code here`;
-    },
+      'enter code here'
+    }
   }
 }
 </script>

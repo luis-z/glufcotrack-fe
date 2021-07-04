@@ -12,28 +12,7 @@
             <v-col cols="4">
               <v-row class="d-flex justify-center ma-6 inner-form">
                 <v-col cols="10" style="margin: 0.5rem">
-                  <h1 style="font-weight: 300">Registrar Dirección</h1>
-                </v-col>
-                <v-col cols="8">
-                  <v-text-field
-                    outlined
-                    v-model="apodo"
-                    :loading="loading"
-                    v-on:keyup.enter="onEnter"
-                    :autofocus="true"
-                    label="Apodo"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="8">
-                  <v-textarea
-                    outlined
-                    v-model="direccion"
-                    :loading="loading"
-                    v-on:keyup.enter="onEnter"
-                    label="Dirección"
-                    required
-                  ></v-textarea>
+                  <h1 style="font-weight: 300">Orden N# {{data.id}}</h1>
                 </v-col>
                 <v-col cols="6">
                   <v-btn @click="createUbicacion">
@@ -55,25 +34,118 @@ import L from 'leaflet'
 import Loader from '@/components/Loader.vue'
 
 export default {
-  name: 'CrearUbicacion',
+  name: 'RealizarEntrega',
   components: {
     Loader
   },
   data () {
     return {
       loading: false,
-      apodo: '',
-      direccion: '',
+      recorridos: [],
       coordenadas: [],
-      center: [10.496584, -66.845662]
+      marker: [],
+      map: null,
+      center: [10.496584, -66.845662],
+      currentPosition: []
     }
   },
+  props: {
+    // value: Boolean,
+    data: Object
+  },
   mounted () {
-    this.setupLeafletMap()
+    this.loadData()
   },
   methods: {
+    async getCurrentPosition() {
+      var selfTwo = this
+      setInterval(function(){ 
+        navigator.geolocation.getCurrentPosition(function(position) {
+          console.log(position.coords.latitude, position.coords.longitude);
+
+          selfTwo.placeMarker([position.coords.latitude, position.coords.longitude])
+
+        });
+      }, 20000);
+    },
+    async placeMarker (coordenadas)
+    {
+      if (this.marker) {
+        this.map.removeLayer(this.marker)
+      }
+
+      this.currentPosition = coordenadas
+      await this.saveCurrentPosition()
+
+      var GlufcoIcon = L.icon({
+        iconUrl: '../img/GLUFCOIN.svg',
+        iconSize: [60, 61], // size of the icon
+        iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
+        popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
+      })
+
+      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
+    },
+    async saveCurrentPosition() {
+      try {
+        this.loading = true
+
+        await this.$axios.post('recorridos/create',{
+          orden_id: this.data.id,
+          coordenadas: this.currentPosition.toString()
+        })
+        
+        this.loading = false
+
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
+    },
     async onEnter () {
       await this.createUbicacion()
+    },
+    async loadData () {
+      this.loading = true
+      try {
+        const recorridos = await this.$axios.post('recorridos/index',{
+          orden_id: this.data.id
+        })
+
+        this.recorridos = recorridos.data.data
+
+        await this.setupLeafletMap()
+        await this.getCurrentPosition()
+        this.loading = false
+
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
     },
     async createUbicacion () {
       try {
@@ -148,7 +220,7 @@ export default {
       }
     },
     setupLeafletMap () {
-      var mymap = L.map('mapid').setView(this.center, 13)
+      this.map = L.map('mapid').setView(this.center, 13)
       L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -156,32 +228,8 @@ export default {
         tileSize: 512,
         zoomOffset: -1,
         accessToken: 'pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ'
-      }).addTo(mymap)
+      }).addTo(this.map)
 
-      var marker
-      self = this
-
-      mymap.on('click', function (e) {
-        const lat = e.latlng.lat
-        const lng = e.latlng.lng
-        /*
-          para evitar tener multiples markers en el mapa
-        */
-        if (marker) {
-          mymap.removeLayer(marker)
-        }
-
-        var GlufcoIcon = L.icon({
-          iconUrl: '../img/GLUFCOIN.svg',
-          iconSize: [60, 61], // size of the icon
-          iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
-          popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
-        })
-
-        self.coordenadas = [lat, lng]
-
-        marker = L.marker(self.coordenadas, { icon: GlufcoIcon }).addTo(mymap)
-      })
     },
     async goToListar () {
       this.$emit('goToListar')

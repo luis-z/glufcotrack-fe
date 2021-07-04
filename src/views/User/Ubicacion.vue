@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <Loader v-bind:visible="loading" />
-    <component 
+    <component
       :is="component"
       @goToCreate="goToCreate()"
       @goToListar="goToListar()"
@@ -9,45 +9,43 @@
   </v-container>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
-import ListarUbicaciones from "@/components/User/Ubicacion/ListarUbicaciones.vue";
-import CrearUbicacion from "@/components/User/Ubicacion/CrearUbicacion.vue";
+import Loader from '@/components/Loader.vue'
+import ListarUbicaciones from '@/components/User/Ubicacion/ListarUbicaciones.vue'
+import CrearUbicacion from '@/components/User/Ubicacion/CrearUbicacion.vue'
 
 export default {
-  name: "Ubicacion",
+  name: 'Ubicacion',
   components: {
     Loader,
     ListarUbicaciones,
     CrearUbicacion
   },
-  data() {
+  data () {
     return {
       component: null,
-      loading: true,
+      loading: true
     }
   },
   computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
+    currentUser () {
+      return this.$store.state.auth.user
     }
   },
-  mounted() {
+  mounted () {
     this.loadData()
   },
   methods: {
     async loadData () {
       try {
-
         this.loading = false
         this.component = ListarUbicaciones
-    
       } catch (error) {
         this.$notify({
-          title: "Error",
+          title: 'Error',
           text: error.message,
-          type: "error",
-        });
-        this.$router.push("/");
+          type: 'error'
+        })
+        this.$router.push('/')
       }
     },
     goToCreate () {
@@ -57,7 +55,7 @@ export default {
       this.component = ListarUbicaciones
     }
   }
-};
+}
 </script>
 <style scoped>
 .login-card {

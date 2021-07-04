@@ -69,44 +69,44 @@
 
 <script>
 export default {
-  name: "App",
+  name: 'App',
 
   data: () => ({}),
   computed: {
-    currentRouteName() {
-      return this.$route.name;
+    currentRouteName () {
+      return this.$route.name
     },
-    currentUser() {
-      return this.$store.state.auth.user;
+    currentUser () {
+      return this.$store.state.auth.user
     },
-    showAdminBoard() {
-      if (this.currentUser && this.currentUser["roles"]) {
-        return this.currentUser["roles"].includes("ROLE_ADMIN");
+    showAdminBoard () {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_ADMIN')
       }
 
-      return false;
+      return false
     },
-    showModeratorBoard() {
-      if (this.currentUser && this.currentUser["roles"]) {
-        return this.currentUser["roles"].includes("ROLE_MODERATOR");
+    showModeratorBoard () {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_MODERATOR')
       }
 
-      return false;
+      return false
     }
   },
   methods: {
-    goHome() {
-      this.$router.push("/");
+    goHome () {
+      this.$router.push('/')
     },
-    logOut() {
-      this.$store.dispatch("auth/logout");
-      this.$router.push("/");
+    logOut () {
+      this.$store.dispatch('auth/logout')
+      this.$router.push('/')
     },
-    goRegister() {
-      this.$router.push("/registro");
+    goRegister () {
+      this.$router.push('/registro')
     }
   }
-};
+}
 </script>
 <style lang="scss">
 @import "~sweetalert2/src/variables";

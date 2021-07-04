@@ -23,27 +23,62 @@
                   </v-chip>
                 </template>
                 <template v-slot:[`item.acciones`]="{ item }">
-                  <v-btn
-                    dense
-                    style="margin-right: 1rem"
-                    color="blue"
-                    dark
-                    @click="ProcesarOrden(item)"
-                  >
-                    <v-icon dense>
-                      mdi-check-box-outline
-                    </v-icon>
-                  </v-btn>
-                  <v-btn
-                    dense
-                    color="red"
-                    dark
-                    @click="CancelarOrden(item)"
-                  >
-                    <v-icon dense>
-                      mdi-cancel
-                    </v-icon>
-                  </v-btn>
+                  <v-tooltip left v-if="item.estatus === 'EN PROCESO'">
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dense
+                        style="margin-right: 1rem"
+                        :color="item.estatus !== 'CANCELADA' ? 'blue' : 'lightgray'"
+                        dark
+                        @click="if (item.estatus !== 'CANCELADA') EntregarOrden(item)"
+                      >
+                        <v-icon
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          mdi-bike-fast
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Realizar Entrega</span>
+                  </v-tooltip>
+                  <v-tooltip left v-else>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dense
+                        style="margin-right: 1rem"
+                        :color="item.estatus !== 'CANCELADA' ? 'blue' : 'lightgray'"
+                        dark
+                        @click="if (item.estatus !== 'CANCELADA') ProcesarOrden(item)"
+                      >
+                        <v-icon
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          mdi-check-box-outline
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Procesar</span>
+                  </v-tooltip>
+                  <v-tooltip right>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        dense
+                        :color="item.estatus !== 'CANCELADA' ? 'red' : 'lightgray'"
+                        dark
+                        @click="if (item.estatus !== 'CANCELADA') CancelarOrden(item)"
+                      >
+                        <v-icon
+                          v-bind="attrs"
+                          v-on="on"
+                        >
+                          mdi-cancel
+                        </v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Cancelar</span>
+                  </v-tooltip>
                 </template>
               </v-data-table>
             </v-col>
@@ -54,56 +89,70 @@
   </v-row>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
+import Loader from '@/components/Loader.vue'
 
 export default {
-  name: "ListarOrdenesTrabajador",
+  name: 'ListarOrdenesTrabajador',
   components: {
-    Loader,
+    Loader
   },
-  data() {
+  data () {
     return {
       loading: false,
       headers: [
-        { text: "ID", value: "id" },
-        { text: "Destino", value: "apodo_ubicacion" },
-        { text: "Cantidad de DTC", value: "cantidad_dtc", align: 'center' },
-        { text: "Cantidad de Tarjetas", value: "cantidad_tarjeta", align: 'center'  },
-        { text: "Comprobante de Pago", value: "comprobante_pago", align: 'center'  },
-        { text: "Estatus", value: "estatus", align: 'center'  },
-        { text: "Acciones", value: "acciones", align: 'center'  },
+        { text: 'ID', value: 'id' },
+        { text: 'Destino', value: 'apodo_ubicacion' },
+        { text: 'Cantidad de DTC', value: 'cantidad_dtc', align: 'center' },
+        { text: 'Cantidad de Tarjetas', value: 'cantidad_tarjeta', align: 'center' },
+        { text: 'Comprobante de Pago', value: 'comprobante_pago', align: 'center' },
+        { text: 'Estatus', value: 'estatus', align: 'center' },
+        { text: 'Acciones', value: 'acciones', align: 'center' }
       ],
       ordenes: [],
       selected: {}
-    };
+    }
   },
-  mounted() {
-    this.loadOrdenes();
+  mounted () {
+    this.loadOrdenes()
   },
   methods: {
     getColor (estatus) {
       switch (estatus) {
         case 'EN REVISIÓN':
-          return 'yellow'
-          break;
+          return '#7300f1'
+          break
 
         case 'EN PROCESO':
           return 'blue'
-          break;
-        
+          break
+
         case 'CANCELADA':
           return 'red'
-          break;
-      
+          break
+
         default:
           return 'red'
-          break;
+          break
       }
     },
-    goToCreate() {
-      this.$emit("goToCreate");
+    goToCreate () {
+      this.$emit('goToCreate')
+    },
+    async EntregarOrden (value) {
+      this.selected = Object.assign({}, value)
+      // logica de remitir a recorrido
+      this.$emit('goToDetalle', this.selected)
     },
     async ProcesarOrden (value) {
+
+      if (value.estatus === 'EN PROCESO') {
+        this.$notify({
+          title: 'Error',
+          text: 'Esta orden ya se encuentra en proceso.',
+          type: 'error'
+        })
+        return
+      }
 
       this.selected = Object.assign({}, value)
 
@@ -114,41 +163,37 @@ export default {
       }
 
       try {
-
-       this.loading = true
-        const update = await this.$axios.post("/ordenes/update", {
+        this.loading = true
+        const update = await this.$axios.post('/ordenes/update', {
           orden_id: this.selected.id,
           estatus: 2 // en proceso
-        });
+        })
 
         this.$notify({
-          title: "Exito",
+          title: 'Exito',
           text: update.data.data,
-          type: "success",
-        });
+          type: 'success'
+        })
 
-        this.loading = false;
+        this.loading = false
         await this.loadOrdenes()
-
       } catch (error) {
+        this.loading = false
 
-        this.loading = false;
-
-        console.log(error.response);
+        console.log(error.response)
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
-
       }
     },
     async CancelarOrden (value) {
@@ -161,71 +206,67 @@ export default {
       }
 
       try {
-
-       this.loading = true
-        const update = await this.$axios.post("/ordenes/update", {
+        this.loading = true
+        const update = await this.$axios.post('/ordenes/update', {
           orden_id: this.selected.id,
           estatus: 3 // cancelado
-        });
+        })
 
-        console.log('no');
+        console.log('no')
         this.$notify({
-          title: "Exito",
+          title: 'Exito',
           text: update.data.data,
-          type: "success",
-        });
+          type: 'success'
+        })
 
-        this.loading = false;
+        this.loading = false
         await this.loadOrdenes()
-
       } catch (error) {
-        
-        console.log(error.response);
-        this.loading = false;
+        console.log(error.response)
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
-
       }
     },
-    async loadOrdenes() {
+    async loadOrdenes () {
       try {
-        this.loading = true;
-        const ordenes = await this.$axios.post("/ordenes/index", {
-          cliente_id: this.$store.state.auth.user.cliente.id,
-        });
-        this.ordenes = ordenes.data.data;
-        this.loading = false;
+        this.loading = true
+        const ordenes = await this.$axios.post('/ordenes/index', {
+          cliente_id: this.$store.state.auth.user.cliente.id
+        })
+        this.ordenes = ordenes.data.data
+        this.loading = false
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
     async createSwalAlert (msg) {
       try {
-        let result = await this.$swal.fire({
+        const result = await this.$swal.fire({
           title: msg,
           text: '',
           icon: 'warning',
@@ -236,20 +277,18 @@ export default {
           cancelButtonText: 'Cancelar'
         })
 
-          if (result.isConfirmed) {
-            return true
-          }
-
+        if (result.isConfirmed) {
+          return true
+        }
       } catch (error) {
         return false
       }
-
     },
-    async editOrden() {
-      console.log("edit orden");
-    },
-  },
-};
+    async editOrden () {
+      console.log('edit orden')
+    }
+  }
+}
 </script>
 <style scoped>
 .login-card {

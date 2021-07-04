@@ -38,7 +38,7 @@
   ></v-row>
 </template>
 <script>
-export default {};
+export default {}
 </script>
 <style scoped>
 .login-card {

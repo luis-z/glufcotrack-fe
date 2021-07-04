@@ -3,7 +3,7 @@
     <Loader v-bind:visible="loading" />
     <v-col cols="8">
       <v-card class="mx-auto login-card">
-        <v-card-title class="justify-center">>Listado de Ordenes</v-card-title>
+        <v-card-title class="justify-center">Listado de Ordenes</v-card-title>
         <v-card-text>
           <v-btn color="primary" @click="goToCreate">Crear orden</v-btn>
           <v-row class="d-flex justify-center ma-6">
@@ -48,108 +48,108 @@
   </v-row>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
+import Loader from '@/components/Loader.vue'
 
 export default {
-  name: "ListarOrdenes",
+  name: 'ListarOrdenes',
   components: {
-    Loader,
+    Loader
   },
-  data() {
+  data () {
     return {
       loading: false,
       headers: [
-        { text: "ID", value: "id" },
-        { text: "Destino", value: "apodo_ubicacion" },
-        { text: "Cantidad de DTC", value: "cantidad_dtc", align: 'center' },
-        { text: "Cantidad de Tarjetas", value: "cantidad_tarjeta", align: 'center'  },
-        { text: "Estatus", value: "estatus", align: 'center'  },
+        { text: 'ID', value: 'id' },
+        { text: 'Destino', value: 'apodo_ubicacion' },
+        { text: 'Cantidad de DTC', value: 'cantidad_dtc', align: 'center' },
+        { text: 'Cantidad de Tarjetas', value: 'cantidad_tarjeta', align: 'center' },
+        { text: 'Estatus', value: 'estatus', align: 'center' }
       ],
-      ordenes: [],
-    };
+      ordenes: []
+    }
   },
-  mounted() {
-    this.loadOrdenes();
+  mounted () {
+    this.loadOrdenes()
   },
   methods: {
     getColor (estatus) {
       switch (estatus) {
         case 'EN REVISIÓN':
-          return 'yellow'
-          break;
+          return '#7300f1'
+          break
 
         case 'EN PROCESO':
           return 'blue'
-          break;
-        
+          break
+
         case 'CANCELADA':
           return 'red'
-          break;
-      
+          break
+
         default:
           return 'red'
-          break;
+          break
       }
     },
-    goToCreate() {
-      this.$emit("goToCreate");
+    goToCreate () {
+      this.$emit('goToCreate')
     },
     handleRow (value) {
-      console.log(value);
+      console.log(value)
     },
-    async loadOrdenes() {
+    async loadOrdenes () {
       try {
-        this.loading = true;
-        const ordenes = await this.$axios.post("/ordenes/index", {
-          cliente_id: this.$store.state.auth.user.cliente.id,
-        });
-        this.ordenes = ordenes.data.data;
-        this.loading = false;
+        this.loading = true
+        const ordenes = await this.$axios.post('/ordenes/index', {
+          cliente_id: this.$store.state.auth.user.cliente.id
+        })
+        this.ordenes = ordenes.data.data
+        this.loading = false
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
-    async deleteOrden(name) {
-      console.log("delete orden", name);
+    async deleteOrden (name) {
+      console.log('delete orden', name)
       this.$swal
         .fire({
-          title: "Estas seguro que desea eliminar " + name,
-          text: "Esta accion es irrevertible.",
-          icon: "warning",
+          title: 'Estas seguro que desea eliminar ' + name,
+          text: 'Esta accion es irrevertible.',
+          icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Si, eliminar",
-          cancelButtonText: "no",
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, eliminar',
+          cancelButtonText: 'no'
         })
         .then((result) => {
           if (result.isConfirmed) {
             this.$swal.fire(
-              "Eliminado!",
-              "la orden se a eliminado correctamente",
-              "success"
-            );
+              'Eliminado!',
+              'la orden se a eliminado correctamente',
+              'success'
+            )
           }
-        });
+        })
     },
-    async editOrden() {
-      console.log("edit orden");
-    },
-  },
-};
+    async editOrden () {
+      console.log('edit orden')
+    }
+  }
+}
 </script>
 <style scoped>
 .login-card {

@@ -3,35 +3,39 @@
     <Loader v-bind:visible="loading" />
     <component
       :is="component"
+      :data="data"
       @userData="userData"
       @goToCreate="goToCreate()"
       @goToListar="goToListar()"
-      @goToDetalle="goToDetalle()"
+      @goToDetalle="goToDetalle($event)"
     />
   </v-container>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
-import ListarOrdenes from "@/components/Trabajador/Ordenes/Listar.vue";
+import Loader from '@/components/Loader.vue'
+import ListarOrdenes from '@/components/Trabajador/Ordenes/Listar.vue'
+import Detalle from '@/components/Trabajador/Ordenes/Detalle.vue'
 
 export default {
-  name: "Home",
+  name: 'Home',
   components: {
     Loader,
-    ListarOrdenes
+    ListarOrdenes,
+    Detalle
   },
-  data() {
+  data () {
     return {
       component: null,
       loading: false,
+      data: []
     }
   },
   computed: {
-    currentUser() {
-      return this.$store.state.auth.user;
+    currentUser () {
+      return this.$store.state.auth.user
     }
   },
-  mounted() {
+  mounted () {
     // this.userData()
     this.component = ListarOrdenes
   },
@@ -42,13 +46,14 @@ export default {
     goToListar () {
       this.component = ListarOrdenes
     },
-    goToDetalle () {
-      this.component = DetalleOrden
+    goToDetalle (e) {
+      this.data = e
+      this.component = Detalle
     },
     async userData () {
     }
   }
-};
+}
 </script>
 <style scoped>
 .login-card {

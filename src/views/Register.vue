@@ -123,143 +123,143 @@
   </v-row>
 </template>
 <script>
-import Loader from "../components/Loader.vue";
+import Loader from '../components/Loader.vue'
 export default {
-  name: "Login",
+  name: 'Login',
   components: {
-    Loader,
+    Loader
   },
   data: () => ({
-    name: "",
-    lastname: "",
-    password: "",
-    passwordConfirm: "",
-    tipo_documento: "",
-    numero_documento: "",
+    name: '',
+    lastname: '',
+    password: '',
+    passwordConfirm: '',
+    tipo_documento: '',
+    numero_documento: '',
     tipo_documento_list: [
       {
-        id: "V",
-        name: "Venezolano",
+        id: 'V',
+        name: 'Venezolano'
       },
       {
-        id: "E",
-        name: "Extranjero",
+        id: 'E',
+        name: 'Extranjero'
       },
       {
-        id: "P",
-        name: "Pasaporte",
-      },
+        id: 'P',
+        name: 'Pasaporte'
+      }
     ],
-    email: "",
-    error: "",
+    email: '',
+    error: '',
     loading: false,
-    message: "",
+    message: '',
     sended: false,
     show1: false,
-    phoneNumber: "",
-    operator: "",
+    phoneNumber: '',
+    operator: '',
     operatorsList: [
       {
-        id: "414",
-        name: "0414",
+        id: '414',
+        name: '0414'
       },
       {
-        id: "424",
-        name: "0424",
+        id: '424',
+        name: '0424'
       },
       {
-        id: "412",
-        name: "0412",
+        id: '412',
+        name: '0412'
       },
       {
-        id: "416",
-        name: "0416",
+        id: '416',
+        name: '0416'
       },
       {
-        id: "426",
-        name: "0426",
-      },
+        id: '426',
+        name: '0426'
+      }
     ],
     nameRules: [
-      (v) => !!v || "El nombre es requerido",
-      (v) => (v && v.length <= 10) || "Máximo 10 carácteres",
+      (v) => !!v || 'El nombre es requerido',
+      (v) => (v && v.length <= 10) || 'Máximo 10 carácteres'
     ],
     lastnameRules: [
-      (v) => !!v || "El apellido es requerido",
-      (v) => (v && v.length <= 10) || "Máximo 10 carácteres",
+      (v) => !!v || 'El apellido es requerido',
+      (v) => (v && v.length <= 10) || 'Máximo 10 carácteres'
     ],
     numeroDocumentoRules: [
-      (v) => !!v || "El numero de documento es requerido es requerido",
+      (v) => !!v || 'El numero de documento es requerido es requerido'
     ],
     tiponumeroDocumentoRules: [
-      (v) => !!v || "El tipo de documento es requerido es requerido",
+      (v) => !!v || 'El tipo de documento es requerido es requerido'
     ],
     operadorRules: [
-      (v) => !!v || "El operador es requerido es requerido es requerido",
+      (v) => !!v || 'El operador es requerido es requerido es requerido'
     ],
     passwordRules: [
-      (v) => !!v || "La contraseña es requerida",
-      (v) => (v && v.length >= 8) || "Mínimo 8 carácteres",
+      (v) => !!v || 'La contraseña es requerida',
+      (v) => (v && v.length >= 8) || 'Mínimo 8 carácteres'
     ],
     emailRules: [
-      (v) => !!v || "El correo es requerido",
-      (v) => /.+@.+\..+/.test(v) || "El correo debe ser válido",
-    ],
+      (v) => !!v || 'El correo es requerido',
+      (v) => /.+@.+\..+/.test(v) || 'El correo debe ser válido'
+    ]
   }),
   methods: {
-    async onEnter() {
-      await this.registerUser();
+    async onEnter () {
+      await this.registerUser()
     },
-    async registerUser() {
+    async registerUser () {
       try {
-        await this.validations();
+        await this.validations()
 
-        this.loading = true;
+        this.loading = true
 
         // validaciones
-        const register = await this.$axios.post("register", {
+        const register = await this.$axios.post('register', {
           email: this.email,
           nombre: this.name,
           apellido: this.lastname,
           numero_telefono: this.operator + this.phoneNumber,
           tipo_documento: this.tipo_documento,
           numero_documento: this.numero_documento,
-          password: this.password,
-        });
+          password: this.password
+        })
 
-        this.loading = false;
+        this.loading = false
 
         this.$notify({
-          title: "Exito",
+          title: 'Exito',
           text: register.data.data,
-          type: "success",
-        });
+          type: 'success'
+        })
 
-        this.$router.push("/");
+        this.$router.push('/')
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
-    async validations() {
-      if (this.name === "" || this.name.length <= 0) {
-        throw new Error("El nombre de usuario es requerido");
+    async validations () {
+      if (this.name === '' || this.name.length <= 0) {
+        throw new Error('El nombre de usuario es requerido')
       }
 
-      if (this.email === "" || this.email.length <= 0) {
-        throw new Error("El correo es requerido");
+      if (this.email === '' || this.email.length <= 0) {
+        throw new Error('El correo es requerido')
       }
 
       if (
@@ -267,35 +267,35 @@ export default {
           this.email
         )
       ) {
-        throw new Error("El correo es inválido");
+        throw new Error('El correo es inválido')
       }
 
       if (!/.+@.+\..+/.test(this.email)) {
-        throw new Error("El correo es inválido");
+        throw new Error('El correo es inválido')
       }
 
-      if (this.operator === "" || this.operator.length <= 0) {
-        throw new Error("La operadora es requerida");
+      if (this.operator === '' || this.operator.length <= 0) {
+        throw new Error('La operadora es requerida')
       }
 
-      if (this.phoneNumber === "" || this.phoneNumber.length <= 0) {
-        throw new Error("El número de teléfono es requerido");
+      if (this.phoneNumber === '' || this.phoneNumber.length <= 0) {
+        throw new Error('El número de teléfono es requerido')
       }
 
       if (this.phoneNumber.length !== 7) {
-        throw new Error("El número de teléfono debe tener 7 dígitos");
+        throw new Error('El número de teléfono debe tener 7 dígitos')
       }
 
       if (isNaN(this.phoneNumber.length)) {
-        throw new Error("El número de teléfono debe tener solo dígitos");
+        throw new Error('El número de teléfono debe tener solo dígitos')
       }
 
-      if (this.password === "" || this.password.length <= 0) {
-        throw new Error("La contraseña es requerida");
+      if (this.password === '' || this.password.length <= 0) {
+        throw new Error('La contraseña es requerida')
       }
 
       if (this.password.length < 8) {
-        throw new Error("La contraseña debe tener mas de 8 carácteres");
+        throw new Error('La contraseña debe tener mas de 8 carácteres')
       }
 
       if (
@@ -304,42 +304,42 @@ export default {
         )
       ) {
         throw new Error(
-          "La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
-        );
+          'La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial'
+        )
       }
 
-      if (this.passwordConfirm === "" || this.passwordConfirm.length <= 0) {
-        throw new Error("La confirmación de la contraseña es requerida");
+      if (this.passwordConfirm === '' || this.passwordConfirm.length <= 0) {
+        throw new Error('La confirmación de la contraseña es requerida')
       }
 
       if (this.passwordConfirm !== this.password) {
-        throw new Error("Las contraseñas no coinciden");
+        throw new Error('Las contraseñas no coinciden')
       }
 
-      return true;
+      return true
     },
     isNumber: function (evt) {
-      evt = evt ? evt : window.event;
-      var charCode = evt.which ? evt.which : evt.keyCode;
+      evt = evt || window.event
+      var charCode = evt.which ? evt.which : evt.keyCode
       if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode != 9) {
-        evt.preventDefault();
+        evt.preventDefault()
       } else {
-        return true;
+        return true
       }
-      `enter code here`;
+      'enter code here'
     },
     computed: {
-      loggedIn() {
-        return this.$store.state.auth.status.loggedIn;
-      },
-    },
-    created() {
-      if (this.loggedIn) {
-        this.$router.push("/ordenes");
+      loggedIn () {
+        return this.$store.state.auth.status.loggedIn
       }
     },
-  },
-};
+    created () {
+      if (this.loggedIn) {
+        this.$router.push('/ordenes')
+      }
+    }
+  }
+}
 </script>
 <style scoped>
 .register-card {

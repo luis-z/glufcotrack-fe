@@ -48,7 +48,7 @@
                         mdi-minus
                       </v-icon>
                     </template>
-            
+
                     <template v-slot:append>
                       <v-icon
                         color="blue"
@@ -81,7 +81,7 @@
                         mdi-minus
                       </v-icon>
                     </template>
-            
+
                     <template v-slot:append>
                       <v-icon
                         color="blue"
@@ -142,14 +142,14 @@
 </template>
 
 <script>
-import Loader from "@/components/Loader.vue";
+import Loader from '@/components/Loader.vue'
 
 export default {
-  name: "CrearOrden",
+  name: 'CrearOrden',
   components: {
     Loader
   },
-  data() {
+  data () {
     return {
       loading: false,
       cantidadDtc: '',
@@ -159,9 +159,9 @@ export default {
       ubicaciones: [],
       selectedUbicacion: '',
       totalPago: '0.00 GLF'
-    };
+    }
   },
-  mounted() {
+  mounted () {
     this.loadData()
   },
   methods: {
@@ -173,14 +173,14 @@ export default {
             return
           }
           this.cantidadDtc--
-          break;
-      
+          break
+
         default:
           if (this.cantidadTarjeta <= 0) {
             return
           }
           this.cantidadTarjeta--
-          break;
+          break
       }
 
       this.updatePayment()
@@ -189,58 +189,57 @@ export default {
       switch (product) {
         case 1:
           this.cantidadDtc++
-          break;
-      
+          break
+
         default:
           if (this.cantidadTarjeta >= 20) {
             return
           }
           this.cantidadTarjeta++
-          break;
+          break
       }
       this.updatePayment()
     },
-    async onEnter() {
-      await this.createOrden();
+    async onEnter () {
+      await this.createOrden()
     },
     async createOrden () {
       try {
-
         if (this.selectedUbicacion.length <= 0) {
           this.$notify({
-            title: "Error",
-            text: "La Ubicación es requerida.",
-            type: "error",
-          });
+            title: 'Error',
+            text: 'La Ubicación es requerida.',
+            type: 'error'
+          })
 
           return
         }
 
         if (this.comprobantePago == '' || this.comprobantePago.length <= 0) {
           this.$notify({
-            title: "Error",
-            text: "El Comprobante de Pago es requerido.",
-            type: "error",
-          });
+            title: 'Error',
+            text: 'El Comprobante de Pago es requerido.',
+            type: 'error'
+          })
 
           return
         }
 
-        let totalFormateado = parseFloat(this.totalPago)
+        const totalFormateado = parseFloat(this.totalPago)
 
         if (totalFormateado <= 0) {
           this.$notify({
-            title: "Error",
-            text: "Debe seleccionar al menos un producto un producto.",
-            type: "error",
-          });
+            title: 'Error',
+            text: 'Debe seleccionar al menos un producto un producto.',
+            type: 'error'
+          })
 
           return
         }
 
         this.loading = true
 
-        let body = {
+        const body = {
           cliente_id: this.$store.state.auth.user.cliente.id,
           ubicacion_id: this.selectedUbicacion,
           cantidad_dtc: this.cantidadDtc,
@@ -253,36 +252,35 @@ export default {
         // return
 
         // validaciones
-        const create = await this.$axios.post("ordenes/create", body);
+        const create = await this.$axios.post('ordenes/create', body)
 
-        this.loading = false;
+        this.loading = false
 
         this.$notify({
-          title: "Exito",
+          title: 'Exito',
           text: create.data.data,
-          type: "success",
-        });
+          type: 'success'
+        })
 
         this.goToListar()
-
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
-    async loadData() {
+    async loadData () {
       try {
         this.loading = true
         const ubicaciones = await this.$axios.post('/ubicaciones/index', {
@@ -291,37 +289,36 @@ export default {
         this.ubicaciones = ubicaciones.data.data
         this.loading = false
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
     async updatePayment () {
-
-      let totalDtc = parseFloat(this.cantidadDtc) * 20
-      console.log(totalDtc);
-      let totalTarjetas = parseFloat(this.cantidadTarjeta) * 1
-      console.log(totalTarjetas);
+      const totalDtc = parseFloat(this.cantidadDtc) * 20
+      console.log(totalDtc)
+      const totalTarjetas = parseFloat(this.cantidadTarjeta) * 1
+      console.log(totalTarjetas)
       this.totalPago = totalDtc + totalTarjetas
-      console.log(this.totalPago);
+      console.log(this.totalPago)
       this.totalPago = this.totalPago.toFixed(2) + ' GLF'
     },
-    async goToListar() {
+    async goToListar () {
       this.$emit('goToListar')
     }
   }
-};
+}
 </script>
 <style scoped>
 .login-card {

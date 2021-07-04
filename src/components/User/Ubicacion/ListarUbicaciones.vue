@@ -68,31 +68,31 @@
   </v-container>
 </template>
 <script>
-import Loader from "@/components/Loader.vue";
-import DetalleUbicacion from "@/components/User/Ubicacion/Detalle.vue";
+import Loader from '@/components/Loader.vue'
+import DetalleUbicacion from '@/components/User/Ubicacion/Detalle.vue'
 
 export default {
-  name: "ListarUbicaciones",
+  name: 'ListarUbicaciones',
   components: {
     Loader,
     DetalleUbicacion
   },
-  data() {
+  data () {
     return {
       loading: false,
       headers: [
-        { text: "ID", value: "id" },
-        { text: "Apodo", value: "apodo" },
-        { text: "Estatus", value: "estatus" },
-        { text: "Ubicación en el mapa", value: "map", align: 'center', }
+        { text: 'ID', value: 'id' },
+        { text: 'Apodo', value: 'apodo' },
+        { text: 'Estatus', value: 'estatus' },
+        { text: 'Ubicación en el mapa', value: 'map', align: 'center' }
       ],
       ubicaciones: [],
       dialog: false,
       ubicacionData: {},
       selected: []
-    };
+    }
   },
-  mounted() {
+  mounted () {
     this.loadUbicaciones()
   },
   methods: {
@@ -100,16 +100,16 @@ export default {
       switch (estatus) {
         case true:
           return 'blue'
-          break;
-      
+          break
+
         default:
           return 'red'
-          break;
+          break
       }
     },
-    async changeStatus(item) {
+    async changeStatus (item) {
       this.selected = Object.assign({}, item)
-      
+
       this.selected.estatus = !this.selected.estatus
 
       try {
@@ -117,26 +117,26 @@ export default {
         const updated = await this.$axios.post('/ubicaciones/update', this.selected)
 
         this.$notify({
-          title: "Exito",
-            text: updated.data.data,
-            type: "success",
-          });
+          title: 'Exito',
+          text: updated.data.data,
+          type: 'success'
+        })
 
         await this.loadUbicaciones()
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
@@ -147,7 +147,7 @@ export default {
     async closeDetail () {
       this.dialog = false
     },
-    async loadUbicaciones() {
+    async loadUbicaciones () {
       try {
         this.loading = true
         const ubicaciones = await this.$axios.post('/ubicaciones/index', {
@@ -156,53 +156,53 @@ export default {
         this.ubicaciones = ubicaciones.data.data
         this.loading = false
       } catch (error) {
-        this.loading = false;
+        this.loading = false
         if (error.response) {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.response.data.data,
-            type: "error",
-          });
+            type: 'error'
+          })
         } else {
           this.$notify({
-            title: "Error",
+            title: 'Error',
             text: error.message,
-            type: "error",
-          });
+            type: 'error'
+          })
         }
       }
     },
-    async deleteOrden(name) {
-      console.log("delete orden", name);
+    async deleteOrden (name) {
+      console.log('delete orden', name)
       this.$swal
         .fire({
-          title: "Estas seguro que desea eliminar " + name,
-          text: "Esta accion es irrevertible.",
-          icon: "warning",
+          title: 'Estas seguro que desea eliminar ' + name,
+          text: 'Esta accion es irrevertible.',
+          icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
-          confirmButtonText: "Si, eliminar",
-          cancelButtonText: "no"
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, eliminar',
+          cancelButtonText: 'no'
         })
         .then(result => {
           if (result.isConfirmed) {
             this.$swal.fire(
-              "Eliminado!",
-              "la orden se a eliminado correctamente",
-              "success"
-            );
+              'Eliminado!',
+              'la orden se a eliminado correctamente',
+              'success'
+            )
           }
-        });
+        })
     },
-    async editOrden() {
-      console.log("edit orden");
+    async editOrden () {
+      console.log('edit orden')
     },
     async gotToCreate () {
       this.$emit('goToCreate')
     }
   }
-};
+}
 </script>
 <style scoped>
 .login-card {

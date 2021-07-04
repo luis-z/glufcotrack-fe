@@ -26,8 +26,8 @@
   </div>
 </template>
 <script>
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
+import 'leaflet/dist/leaflet.css'
+import L from 'leaflet'
 export default {
   name: 'DetalleOrden',
   components: {
@@ -36,16 +36,16 @@ export default {
     visible: Boolean,
     ordenData: Object
   },
-  data() {
+  data () {
     return {
       map: [],
       marker: []
-    };
+    }
   },
   watch: {
     ordenData: function () {
       this.loadData()
-    },
+    }
   },
   computed: {
     dialog () {
@@ -53,37 +53,34 @@ export default {
     }
   },
   methods: {
-    goToListar() {
-      this.map.removeLayer(this.marker);
+    goToListar () {
+      this.map.removeLayer(this.marker)
       this.$emit('goToListar')
     },
     async loadData () {
       try {
-        
         // PENDIENTE
-        await this.$axios.post('recorridos/consultar',{
+        await this.$axios.post('recorridos/consultar', {
           orden_id: this.ordenData.id
         })
-        
+
         self = this
-        setTimeout(function(){ 
-          let coordenadas = self.ordenData.coordenadas.split(',')
-          console.log('coordenadas');
-          console.log(coordenadas);
+        setTimeout(function () {
+          const coordenadas = self.ordenData.coordenadas.split(',')
+          console.log('coordenadas')
+          console.log(coordenadas)
           self.marker = null
           if (self.map.length <= 0) {
             self.setupLeafletMap(coordenadas)
           }
           self.changeMarker(coordenadas)
-        }, 500);
-        
-
+        }, 500)
       } catch (error) {
-        
+
       }
     },
     setupLeafletMap (coordenadas) {
-      this.map = L.map('ubicacionDetail').setView(coordenadas, 13);
+      this.map = L.map('ubicacionDetail').setView(coordenadas, 13)
       L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -91,11 +88,9 @@ export default {
         tileSize: 512,
         zoomOffset: -1,
         accessToken: 'pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ'
-      }).addTo(this.map);
-
+      }).addTo(this.map)
     },
-    changeMarker(coordenadas) {
-
+    changeMarker (coordenadas) {
       var GlufcoIcon = L.icon({
         iconUrl: '../img/GLUFCOIN.svg',
         iconSize: [60, 61], // size of the icon
@@ -105,7 +100,7 @@ export default {
 
       this.map.setView(coordenadas, 13)
 
-      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map);
+      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
     }
   }
 }

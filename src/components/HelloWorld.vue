@@ -154,7 +154,7 @@ export default {
     async test () {
       try {
         const test = await this.$axios.post('test', {
-          'qlq': 12312421
+          qlq: 12312421
         })
         console.log('rsp')
         console.log(test)
