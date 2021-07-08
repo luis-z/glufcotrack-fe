@@ -1,42 +1,62 @@
 <template>
-  <v-row class="d-flex justify-center">
-    <Loader v-bind:visible="loading" />
-    <v-col cols="12">
-      <v-card class="mx-auto login-card">
-        <v-card-text>
-          <v-btn color="primary" @click="goToListar">regresar</v-btn>
-          <v-row class="d-flex justify-center ma-6">
-            <v-col cols="8">
-              <div id="mapid"></div>
-            </v-col>
-            <v-col cols="4">
-              <v-row class="d-flex justify-center ma-6 inner-form">
-                <v-col cols="10" style="margin: 0.5rem">
-                  <h1 style="font-weight: 300">Orden N# {{data.id}}</h1>
-                </v-col>
-                <v-col cols="6">
-                  <v-btn @click="createUbicacion">
-                    enviar
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </v-card>
-    </v-col>
-  </v-row>
+  <v-container fluid>
+    <v-row class="d-flex justify-center">
+      <Loader v-bind:visible="loading" />
+      <v-col cols="12">
+        <v-card class="mx-auto login-card">
+          <v-card-text>
+            <v-btn color="primary" @click="goToListar">regresar</v-btn>
+            <v-row class="d-flex justify-center ma-6">
+
+              <v-col cols="12" md="6" xs="12">
+                <Trayecto
+                  :destino="[10.418725432317451,-66.87351107597352]"
+                  :posicionActual="currentPosition"
+                />
+              </v-col>
+
+              <v-col cols="4" md="6" xs="12">
+                <v-row class="d-flex justify-center ma-6 inner-form">
+                  <v-col cols="10" xs="6" style="margin: 0.5rem">
+                    <h1 style="font-weight: 300">Orden N# {{data.id}}</h1>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-btn @click="createUbicacion">
+                      <v-icon style="margin: 1rem">
+                        mdi-bell-ring-outline
+                      </v-icon>
+                      Notificar al cliente <br> la llegada de su orden
+                    </v-btn>
+                  </v-col>
+                  <v-col cols="12">
+                    <v-btn @click="createUbicacion">
+                      <v-icon style="margin: 1rem">
+                        mdi-bell-ring-outline
+                      </v-icon>
+                      Notificar al cliente <br> la salida de su orden
+                    </v-btn>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import Loader from '@/components/Loader.vue'
+import Trayecto from '@/components/Mapa/Trayecto.vue'
 
 export default {
   name: 'RealizarEntrega',
   components: {
-    Loader
+    Loader,
+    Trayecto
   },
   data () {
     return {
@@ -46,7 +66,8 @@ export default {
       marker: [],
       map: null,
       center: [10.496584, -66.845662],
-      currentPosition: []
+      currentPosition: [],
+      e1: 1,
     }
   },
   props: {
@@ -58,15 +79,18 @@ export default {
   },
   methods: {
     async getCurrentPosition() {
-      var selfTwo = this
-      setInterval(function(){ 
+      var self = this
+      setInterval(function() {
         navigator.geolocation.getCurrentPosition(function(position) {
           console.log(position.coords.latitude, position.coords.longitude);
 
-          selfTwo.placeMarker([position.coords.latitude, position.coords.longitude])
+          self.currentPosition = [position.coords.latitude, position.coords.longitude]
+
+          // self.placeMarker([position.coords.latitude, position.coords.longitude])
+          // await self.saveCurrentPosition()
 
         });
-      }, 20000);
+      }, 5000);
     },
     async placeMarker (coordenadas)
     {
@@ -94,7 +118,7 @@ export default {
           orden_id: this.data.id,
           coordenadas: this.currentPosition.toString()
         })
-        
+
         this.loading = false
 
       } catch (error) {
@@ -126,7 +150,7 @@ export default {
 
         this.recorridos = recorridos.data.data
 
-        await this.setupLeafletMap()
+        // await this.setupLeafletMap()
         await this.getCurrentPosition()
         this.loading = false
 
