@@ -15,14 +15,6 @@
                 class="elevation-1"
                 @click:row="handleRow"
               >
-                <template v-slot:[`item.actions`]="{ item }">
-                  <v-icon small class="mr-2" @click="editOrden(item.name)">
-                    mdi-pencil
-                  </v-icon>
-                  <v-icon small @click="deleteOrden(item.name)">
-                    mdi-delete
-                  </v-icon>
-                </template>
                 <template v-slot:[`item.estatus`]="{ item }">
                   <v-tooltip right color="blue">
                     <template v-slot:activator="{ on, attrs }">
@@ -32,6 +24,7 @@
                         outlined
                         v-bind="attrs"
                         v-on="on"
+                        @click="watchOrder(item)"
                       >
                         {{item.estatus}}
                       </v-chip>
@@ -65,7 +58,8 @@ export default {
         { text: 'Cantidad de Tarjetas', value: 'cantidad_tarjeta', align: 'center' },
         { text: 'Estatus', value: 'estatus', align: 'center' }
       ],
-      ordenes: []
+      ordenes: [],
+      selected: []
     }
   },
   mounted () {
@@ -78,16 +72,12 @@ export default {
           return '#7300f1'
           break
 
-        case 'EN PROCESO':
-          return 'blue'
-          break
-
         case 'CANCELADA':
           return 'red'
           break
 
         default:
-          return 'red'
+          return 'blue'
           break
       }
     },
@@ -145,8 +135,10 @@ export default {
           }
         })
     },
-    async editOrden () {
-      console.log('edit orden')
+    async watchOrder (item) {
+      this.selected = Object.assign({}, item)
+      // logica de remitir a recorrido
+      this.$emit('goToDetalle', this.selected)
     }
   }
 }

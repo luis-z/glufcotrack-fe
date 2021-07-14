@@ -1,96 +1,140 @@
 <template>
-  <div>
-    <v-card>
-      <v-toolbar
-        style="background:linear-gradient(90deg, rgb(20, 27, 50), rgb(59, 70, 108) 48%, rgb(20, 27, 50));"
-        dark
-      >
-        <strong>"{{ordenData.apodo}}"</strong>
-      </v-toolbar>
-      <v-card-text>
-        <v-col cols="12">
-          <h3>Dirección:</h3>
-          <p>{{ordenData.direccion}}</p>
-        </v-col>
-        <v-col cols="12">
-          <div id="ubicacionDetail"></div>
-        </v-col>
-      </v-card-text>
-      <v-card-actions class="justify-end">
-        <v-btn
-          text
-          @click="goToListar"
-        >Cerrar</v-btn>
-      </v-card-actions>
-    </v-card>
-  </div>
+  <v-container fluid>
+    <v-row class="d-flex justify-center">
+      <Loader v-bind:visible="loading" />
+      <v-col cols="12">
+        <v-card class="mx-auto login-card">
+          <v-card-text>
+            <v-btn color="primary" @click="goToListar">regresar</v-btn>
+            <v-row class="d-flex justify-center ma-6">
+
+              <v-col cols="12" md="8" xs="12">
+                <Trayecto
+                  :destino="ordenData.coordenadas"
+                  :posicionActual="currentPosition"
+                />
+              </v-col>
+
+              <v-col cols="4" md="4" xs="12">
+                <v-row class="d-flex justify-center ma-6 inner-form">
+                  <v-col cols="10" xs="6" style="margin: 0.5rem">
+                    <center>
+                      <h1 style="font-weight: 300">Orden N# {{ordenData.id}}</h1>
+                    </center>
+                  </v-col>
+                  <v-col cols="12">
+                    <center>
+                      <v-icon large style="margin: 1rem" color="orange">
+                        mdi-bell-ring-outline
+                      </v-icon>
+                      <h2><span v-html="notificationMsg"></span></h2>
+                      <br>
+                      <v-btn large>
+                        <v-icon large style="margin: 1rem" :color="iconColor">
+                          {{this.icon}}
+                        </v-icon>
+                      </v-btn>
+                    </center>
+                  </v-col>
+                </v-row>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
+
 <script>
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
+import Loader from '@/components/Loader.vue'
+import Trayecto from '@/components/Mapa/Trayecto.vue'
+
 export default {
-  name: 'DetalleOrden',
+  name: 'ObservarEntrega',
   components: {
-  },
-  props: {
-    visible: Boolean,
-    ordenData: Object
+    Loader,
+    Trayecto
   },
   data () {
     return {
-      map: [],
-      marker: []
+      loading: false,
+      recorridos: [],
+      coordenadas: [],
+      marker: [],
+      map: null,
+      center: [10.496584, -66.845662],
+      currentPosition: [],
+      notificationMsg: '',
+      icon: '',
+      iconColor: '',
+      ordenData: {}
     }
+  },
+  props: {
+    // value: Boolean,
+    data: Object
   },
   watch: {
     ordenData: function () {
-      this.loadData()
+
+      switch (this.ordenData.estatus) {
+        case 2:
+          this.notificationMsg = 'Su orden se encuentra en proceso, en breve saldra hacia su destino.'
+          this.icon = 'mdi-clock-alert-outline'
+          this.iconColor = '#7300f1'
+          break;
+        case 4:
+          this.notificationMsg = 'Su orden va en camino.'
+          this.icon = 'mdi-bike-fast'
+          this.iconColor = '#7300f1'
+          break;
+        case 5:
+          this.notificationMsg = 'Su orden ha llegado al destino.'
+          this.icon = 'mdi-home-map-marker'
+          this.iconColor = '#7300f1'
+          break;
+        case 6:
+          this.notificationMsg = 'Su orden se ha culminado exitosamente.'
+          this.icon = 'mdi-checkbox-multiple-marked-circle-outline'
+          this.iconColor = 'blue'
+          break;
+      
+        default:
+          break;
+      }
+      this.placeMarker(this.deliveryPosition)
     }
   },
-  computed: {
-    dialog () {
-      return this.visible
-    }
+  mounted () {
+    this.loadData()
   },
   methods: {
-    goToListar () {
-      this.map.removeLayer(this.marker)
-      this.$emit('goToListar')
+    async getCurrentPosition() {
+      var self = this
+      setInterval(function() {
+        navigator.geolocation.getCurrentPosition(function(position) {
+          console.log(position.coords.latitude, position.coords.longitude);
+
+          self.currentPosition = [position.coords.latitude, position.coords.longitude]
+
+          // self.placeMarker([position.coords.latitude, position.coords.longitude])
+          // await self.saveCurrentPosition()
+
+        });
+      }, 20000);
     },
-    async loadData () {
-      try {
-        // PENDIENTE
-        await this.$axios.post('recorridos/consultar', {
-          orden_id: this.ordenData.id
-        })
-
-        self = this
-        setTimeout(function () {
-          const coordenadas = self.ordenData.coordenadas.split(',')
-          console.log('coordenadas')
-          console.log(coordenadas)
-          self.marker = null
-          if (self.map.length <= 0) {
-            self.setupLeafletMap(coordenadas)
-          }
-          self.changeMarker(coordenadas)
-        }, 500)
-      } catch (error) {
-
+    async placeMarker (coordenadas)
+    {
+      if (this.marker) {
+        this.map.removeLayer(this.marker)
       }
-    },
-    setupLeafletMap (coordenadas) {
-      this.map = L.map('ubicacionDetail').setView(coordenadas, 13)
-      L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ'
-      }).addTo(this.map)
-    },
-    changeMarker (coordenadas) {
+
+      this.currentPosition = coordenadas
+      await this.saveCurrentPosition()
+
       var GlufcoIcon = L.icon({
         iconUrl: '../img/GLUFCOIN.svg',
         iconSize: [60, 61], // size of the icon
@@ -98,13 +142,126 @@ export default {
         popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
       })
 
-      this.map.setView(coordenadas, 13)
-
       this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
+    },
+    async saveCurrentPosition() {
+      try {
+        this.loading = true
+
+        await this.$axios.post('recorridos/create',{
+          orden_id: this.ordenData.id,
+          coordenadas: this.currentPosition.toString()
+        })
+
+        this.loading = false
+
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
+    },
+    async onEnter () {
+      await this.createUbicacion()
+    },
+    async loadData () {
+      this.loading = true
+      try {
+        const recorridos = await this.$axios.post('recorridos/index',{
+          orden_id: this.data.id
+        })
+
+        const orden = await this.$axios.post('ordenes/detalle',{
+          orden_id: this.data.id
+        })
+
+        this.recorridos = recorridos.data.data
+        this.ordenData = orden.data.data
+
+        // await this.setupLeafletMap()
+        await this.getCurrentPosition()
+        this.loading = false
+
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
+    },
+    async updateStatus () {
+      try {
+        this.loading = true
+
+        if ( this.ordenData.estatus === 2 ) {
+          this.ordenData.estatus = this.ordenData.estatus + 1 
+        }
+        
+        const update = await this.$axios.post('ordenes/update',{
+          orden_id: this.ordenData.id,
+          estatus: parseFloat(this.ordenData.estatus) + 1
+        })
+
+        this.$notify({
+          title: 'Exito',
+          text: update.data.data,
+          type: 'success'
+        })
+
+        this.loading = false
+        await this.loadData()
+      } catch (error) {
+        this.loading = false
+        if (error.response) {
+          this.$notify({
+            title: 'Error',
+            text: error.response.data.data,
+            type: 'error'
+          })
+        } else {
+          this.$notify({
+            title: 'Error',
+            text: error.message,
+            type: 'error'
+          })
+        }
+      }
+    },
+    async goToListar () {
+      this.$emit('goToListar')
     }
   }
 }
 </script>
-<style>
-#ubicacionDetail { height: 250px; }
+<style scoped>
+.login-card {
+  margin-top: 2rem;
+}
+
+#mapid { height: 450px; }
+
+.inner-form {
+  background-color: rgba(211, 220, 236, 0.658);
+}
 </style>

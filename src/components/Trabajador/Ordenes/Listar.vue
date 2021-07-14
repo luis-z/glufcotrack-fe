@@ -23,12 +23,12 @@
                   </v-chip>
                 </template>
                 <template v-slot:[`item.acciones`]="{ item }">
-                  <v-tooltip left v-if="item.estatus === 'EN PROCESO'">
+                  <v-tooltip left v-if="item.estatus_int === 2 || item.estatus_int > 3">
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         dense
                         style="margin-right: 1rem"
-                        :color="item.estatus !== 'CANCELADA' ? 'blue' : 'lightgray'"
+                        :color="disabled(item.estatus_int)"
                         dark
                         @click="if (item.estatus !== 'CANCELADA') EntregarOrden(item)"
                       >
@@ -47,7 +47,7 @@
                       <v-btn
                         dense
                         style="margin-right: 1rem"
-                        :color="item.estatus !== 'CANCELADA' ? 'blue' : 'lightgray'"
+                        :color="disabled(item.estatus_int)"
                         dark
                         @click="if (item.estatus !== 'CANCELADA') ProcesarOrden(item)"
                       >
@@ -59,7 +59,7 @@
                         </v-icon>
                       </v-btn>
                     </template>
-                    <span>Procesar</span>
+                    <span>Verificar</span>
                   </v-tooltip>
                   <v-tooltip right>
                     <template v-slot:activator="{ on, attrs }">
@@ -131,7 +131,20 @@ export default {
           break
 
         default:
-          return 'red'
+          return 'blue'
+          break
+      }
+    },
+    disabled (estatus) {
+      switch (estatus) {
+
+        case 3:
+        case 6:
+          return 'lightgray'
+          break
+
+        default:
+          return 'blue'
           break
       }
     },
@@ -139,11 +152,19 @@ export default {
       this.$emit('goToCreate')
     },
     async EntregarOrden (value) {
+
+      if (value.estatus_int === 3 || value.estatus_int === 6) {
+        return
+      }
       this.selected = Object.assign({}, value)
       // logica de remitir a recorrido
       this.$emit('goToDetalle', this.selected)
     },
     async ProcesarOrden (value) {
+
+      if (value.estatus_int === 3 || value.estatus_int === 6) {
+        return
+      }
 
       if (value.estatus === 'EN PROCESO') {
         this.$notify({
@@ -197,6 +218,10 @@ export default {
       }
     },
     async CancelarOrden (value) {
+
+      if (value.estatus_int === 3 || value.estatus_int === 6) {
+        return
+      }
       this.selected = Object.assign({}, value)
 
       const confirmed = await this.createSwalAlert('¿Esta seguro de cancelar esta orden?')

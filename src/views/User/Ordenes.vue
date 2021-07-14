@@ -3,10 +3,11 @@
     <Loader v-bind:visible="loading" />
     <component
       :is="component"
+      :data="data"
       @userData="userData"
       @goToCreate="goToCreate()"
       @goToListar="goToListar()"
-      @goToDetalle="goToDetalle()"
+      @goToDetalle="goToDetalle($event)"
     />
   </v-container>
 </template>
@@ -31,7 +32,8 @@ export default {
   data () {
     return {
       component: null,
-      loading: true
+      loading: true,
+      data: []
     }
   },
   computed: {
@@ -49,7 +51,8 @@ export default {
     goToListar () {
       this.component = ListarOrdenes
     },
-    goToDetalle () {
+    goToDetalle (data) {
+      this.data = data
       this.component = DetalleOrden
     },
     async userData () {

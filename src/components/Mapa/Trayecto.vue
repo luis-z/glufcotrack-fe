@@ -13,6 +13,7 @@ export default {
   data () {
     return {
       marker: [],
+      destinyMarker: [],
       map: null,
       center: [10.496584, -66.845662]
     }
@@ -25,11 +26,17 @@ export default {
   computed: {
     deliveryPosition () {
       return this.posicionActual
+    },
+    destiny () {
+      return this.destino
     }
   },
   watch: {
     deliveryPosition: function () {
       this.placeMarker(this.deliveryPosition)
+    },
+    destiny: function () {
+      this.placeDestiny(this.deliveryPosition)
     }
   },
   mounted () {
@@ -51,6 +58,15 @@ export default {
 
       this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
       this.map.setView(coordenadas, 16)
+    },
+    async placeDestiny () {
+      var GlufcoIcon = L.icon({
+        iconUrl: '../img/home.png',
+        iconSize: [60, 61], // size of the icon
+        iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
+        popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
+      })
+      this.destinyMarker = L.marker(this.destiny, { icon: GlufcoIcon }).addTo(this.map)
     },
     setupLeafletMap () {
 

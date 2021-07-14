@@ -59,6 +59,7 @@
                       </v-icon>
                     </template>
                   </v-slider>
+                  <p>Costo DTC C/U = 20 GLF</p>
                 </v-col>
                 <v-col cols="8" style="background:  ">
                   <center>
@@ -92,6 +93,7 @@
                       </v-icon>
                     </template>
                   </v-slider>
+                  <p>Costo Tarjeta C/U = 5 GLF</p>
                 </v-col>
               </v-row>
               <v-row class="d-flex justify-center ma-6">

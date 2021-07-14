@@ -75,7 +75,7 @@ export default {
       this.$emit('closeDetail')
     },
     setupLeafletMap (coordenadas) {
-      this.map = L.map('ubicacionDetail').setView(coordenadas, 13)
+      this.map = L.map('ubicacionDetail').setView(coordenadas, 16)
       L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -87,13 +87,13 @@ export default {
     },
     changeMarker (coordenadas) {
       var GlufcoIcon = L.icon({
-        iconUrl: '../img/GLUFCOIN.svg',
+        iconUrl: '../img/home.png',
         iconSize: [60, 61], // size of the icon
         iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
         popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
       })
 
-      this.map.setView(coordenadas, 13)
+      this.map.setView(coordenadas, 16)
 
       this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
     }
@@ -101,5 +101,5 @@ export default {
 }
 </script>
 <style>
-#ubicacionDetail { height: 250px; }
+#ubicacionDetail { height: 350px; }
 </style>

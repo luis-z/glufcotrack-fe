@@ -8,33 +8,33 @@
             <v-btn color="primary" @click="goToListar">regresar</v-btn>
             <v-row class="d-flex justify-center ma-6">
 
-              <v-col cols="12" md="6" xs="12">
+              <v-col cols="12" md="8" xs="12">
                 <Trayecto
-                  :destino="[10.418725432317451,-66.87351107597352]"
+                  :destino="ordenData.coordenadas"
                   :posicionActual="currentPosition"
                 />
               </v-col>
 
-              <v-col cols="4" md="6" xs="12">
+              <v-col cols="4" md="4" xs="12">
                 <v-row class="d-flex justify-center ma-6 inner-form">
                   <v-col cols="10" xs="6" style="margin: 0.5rem">
-                    <h1 style="font-weight: 300">Orden N# {{data.id}}</h1>
+                    <center>
+                      <h1 style="font-weight: 300">Orden N# {{ordenData.id}}</h1>
+                    </center>
                   </v-col>
                   <v-col cols="12">
-                    <v-btn @click="createUbicacion">
-                      <v-icon style="margin: 1rem">
+                    <center>
+                      <v-icon large style="margin: 1rem" color="orange">
                         mdi-bell-ring-outline
                       </v-icon>
-                      Notificar al cliente <br> la llegada de su orden
-                    </v-btn>
-                  </v-col>
-                  <v-col cols="12">
-                    <v-btn @click="createUbicacion">
-                      <v-icon style="margin: 1rem">
-                        mdi-bell-ring-outline
-                      </v-icon>
-                      Notificar al cliente <br> la salida de su orden
-                    </v-btn>
+                      <h2><span v-html="notificationMsg"></span></h2>
+                      <br>
+                      <v-btn large @click="updateStatus">
+                        <v-icon large style="margin: 1rem" :color="iconColor">
+                          {{this.icon}}
+                        </v-icon>
+                      </v-btn>
+                    </center>
                   </v-col>
                 </v-row>
               </v-col>
@@ -67,12 +67,41 @@ export default {
       map: null,
       center: [10.496584, -66.845662],
       currentPosition: [],
-      e1: 1,
+      notificationMsg: '',
+      icon: '',
+      iconColor: '',
+      ordenData: {}
     }
   },
   props: {
     // value: Boolean,
     data: Object
+  },
+  watch: {
+    ordenData: function () {
+
+      switch (this.ordenData.estatus) {
+        case 2:
+          this.notificationMsg = 'Notificar al cliente <br> la salida de su orden'
+          this.icon = 'mdi-bike-fast'
+          this.iconColor = '#7300f1'
+          break;
+        case 4:
+          this.notificationMsg = 'Notificar al cliente <br> la llegada al destino de su orden'
+          this.icon = 'mdi-home-map-marker'
+          this.iconColor = '#7300f1'
+          break;
+        case 5:
+          this.notificationMsg = 'Notificar al cliente <br> la culminación de su orden'
+          this.icon = 'mdi-checkbox-multiple-marked-circle-outline'
+          this.iconColor = 'blue'
+          break;
+      
+        default:
+          break;
+      }
+      this.placeMarker(this.deliveryPosition)
+    }
   },
   mounted () {
     this.loadData()
@@ -90,7 +119,7 @@ export default {
           // await self.saveCurrentPosition()
 
         });
-      }, 5000);
+      }, 20000);
     },
     async placeMarker (coordenadas)
     {
@@ -115,7 +144,7 @@ export default {
         this.loading = true
 
         await this.$axios.post('recorridos/create',{
-          orden_id: this.data.id,
+          orden_id: this.ordenData.id,
           coordenadas: this.currentPosition.toString()
         })
 
@@ -148,7 +177,12 @@ export default {
           orden_id: this.data.id
         })
 
+        const orden = await this.$axios.post('ordenes/detalle',{
+          orden_id: this.data.id
+        })
+
         this.recorridos = recorridos.data.data
+        this.ordenData = orden.data.data
 
         // await this.setupLeafletMap()
         await this.getCurrentPosition()
@@ -171,61 +205,27 @@ export default {
         }
       }
     },
-    async createUbicacion () {
+    async updateStatus () {
       try {
-        if (this.apodo == '' || this.apodo.length <= 0) {
-          this.$notify({
-            title: 'Error',
-            text: 'El apodo es requerido.',
-            type: 'error'
-          })
-
-          return
-        }
-
-        if (this.direccion == '' || this.direccion.length <= 0) {
-          this.$notify({
-            title: 'Error',
-            text: 'La dirección es requerida.',
-            type: 'error'
-          })
-
-          return
-        }
-
-        if (this.coordenadas.length <= 0) {
-          this.$notify({
-            title: 'Error',
-            text: 'Debe seleccionar una ubicación en el mapa.',
-            type: 'error'
-          })
-
-          return
-        }
-
         this.loading = true
 
-        const body = {
-          cliente_id: this.$store.state.auth.user.cliente.id,
-          apodo: this.apodo,
-          direccion: this.direccion,
-          coordenadas: this.coordenadas.toString()
+        if ( this.ordenData.estatus === 2 ) {
+          this.ordenData.estatus = this.ordenData.estatus + 1 
         }
-
-        console.log(body)
-
-        // validaciones
-        const create = await this.$axios.post('ubicaciones/create', body)
-
-        this.loading = false
+        
+        const update = await this.$axios.post('ordenes/update',{
+          orden_id: this.ordenData.id,
+          estatus: parseFloat(this.ordenData.estatus) + 1
+        })
 
         this.$notify({
           title: 'Exito',
-          text: create.data.data,
+          text: update.data.data,
           type: 'success'
         })
 
-        this.goToListar()
+        this.loading = false
+        await this.loadData()
       } catch (error) {
         this.loading = false
         if (error.response) {
@@ -242,18 +242,6 @@ export default {
           })
         }
       }
-    },
-    setupLeafletMap () {
-      this.map = L.map('mapid').setView(this.center, 13)
-      L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ'
-      }).addTo(this.map)
-
     },
     async goToListar () {
       this.$emit('goToListar')

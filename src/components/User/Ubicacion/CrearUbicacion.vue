@@ -172,7 +172,7 @@ export default {
         }
 
         var GlufcoIcon = L.icon({
-          iconUrl: '../img/GLUFCOIN.svg',
+          iconUrl: '../img/home.png',
           iconSize: [60, 61], // size of the icon
           iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
           popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
