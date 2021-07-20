@@ -1,11 +1,11 @@
 <template>
   <v-row class="d-flex justify-center">
-    <v-col cols="4">
+    <v-col md="4" cols="12" sm="8">
       <v-card class="mx-auto login-card">
         <v-card-title class="justify-center">Inicio de sesión</v-card-title>
         <v-card-text>
-          <v-row class="d-flex justify-center ma-6">
-            <v-col cols="10">
+          <v-row class="d-flex justify-center">
+            <v-col md="10" cols="12">
               <v-text-field
                 :disabled="sended"
                 v-model="email"
@@ -17,7 +17,7 @@
                 required
               ></v-text-field>
             </v-col>
-            <v-col cols="10">
+            <v-col md="10" cols="12">
               <v-text-field
                 :disabled="sended"
                 v-model="password"
@@ -32,8 +32,8 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-row class="justify-center">
-            <v-col cols="4">
+          <v-row>
+            <v-col class="d-flex justify-center">
               <v-btn @click="login()" :loading="loading">Iniciar Sesión</v-btn>
             </v-col>
             <br />
@@ -45,79 +45,79 @@
 </template>
 <script>
 export default {
-  name: 'Login',
+  name: "Login",
   components: {},
   data: () => ({
-    email: '',
-    password: '',
-    error: '',
+    email: "",
+    password: "",
+    error: "",
     loading: false,
-    message: '',
+    message: "",
     sended: false,
     show1: false,
     emailRules: [
-      (v) => !!v || 'El email es requerido',
-      (v) => /.+@.+\..+/.test(v) || 'El correo debe ser válido'
+      v => !!v || "El email es requerido",
+      v => /.+@.+\..+/.test(v) || "El correo debe ser válido"
     ],
     passwordRules: [
-      (v) => !!v || 'La contraseña es requerida',
-      (v) => (v && v.length >= 8) || 'Mínimo 8 carácteres'
+      v => !!v || "La contraseña es requerida",
+      v => (v && v.length >= 8) || "Mínimo 8 carácteres"
     ]
   }),
   methods: {
-    async onEnter () {
-      await this.login()
+    async onEnter() {
+      await this.login();
     },
-    async login () {
+    async login() {
       try {
-        await this.validations()
-        this.loading = true
+        await this.validations();
+        this.loading = true;
 
         const user = {
           email: this.email,
           password: this.password
-        }
+        };
 
-        await this.$store.dispatch('auth/login', user)
+        await this.$store.dispatch("auth/login", user);
 
-        await this.$store.dispatch('auth/userData')
-        this.$router.push('/ordenes')
+        await this.$store.dispatch("auth/userData");
+        this.$router.push("/ordenes");
 
-        this.loading = false
+        this.loading = false;
 
         this.$notify({
-          title: 'Login Exitoso',
-          text: '',
-          type: 'success'
-        })
+          title: "Login Exitoso",
+          text: "",
+          type: "success"
+        });
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async validations () {
-      if (this.email === '' || this.email.length <= 0) {
-        throw new Error('El nombre de usuario es requerido')
+    async validations() {
+      if (this.email === "" || this.email.length <= 0) {
+        throw new Error("El nombre de usuario es requerido");
       }
 
-      if (this.password === '' || this.password.length <= 0) {
-        throw new Error('La contraseña es requerida')
+      if (this.password === "" || this.password.length <= 0) {
+        throw new Error("La contraseña es requerida");
       }
 
       if (this.password.length < 8) {
-        throw new Error('La contraseña debe tener mas de 8 carácteres')
+        throw new Error("La contraseña debe tener mas de 8 carácteres");
       }
 
       if (
@@ -126,24 +126,24 @@ export default {
         )
       ) {
         throw new Error(
-          'La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial'
-        )
+          "La contraseña debe tener mínimo ocho caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial"
+        );
       }
 
-      return true
+      return true;
     }
   },
   computed: {
-    loggedIn () {
-      return this.$store.state.auth.status.loggedIn
+    loggedIn() {
+      return this.$store.state.auth.status.loggedIn;
     }
   },
-  created () {
+  created() {
     if (this.loggedIn) {
-      this.$router.push('/ordenes')
+      this.$router.push("/ordenes");
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {
