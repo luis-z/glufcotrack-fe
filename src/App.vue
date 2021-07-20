@@ -54,7 +54,7 @@
           </v-btn>
         </router-link>
         <v-btn text @click.prevent="logOut">
-          <span class="mr-2">Logout</span>
+          <span class="mr-2">Cerrar Sesión</span>
         </v-btn>
       </div>
     </v-app-bar>

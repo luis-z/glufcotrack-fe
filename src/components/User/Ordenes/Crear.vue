@@ -12,7 +12,7 @@
                   <h1 style="font-weight: 300">Generar Orden</h1>
                 </v-col>
                 <v-col cols="10">
-                  <h3 style="font-weight: 400">1- Seleccione el destino de su pedido:</h3>
+                  <h3 style="font-weight: 800; color: black">1- Seleccione el destino de su pedido:</h3>
                 </v-col>
                 <v-col cols="8">
                   <v-select
@@ -25,7 +25,7 @@
                   ></v-select>
                 </v-col>
                 <v-col cols="10">
-                  <h3 style="font-weight: 400">2- Seleccione la cantidad de productos que desea:</h3>
+                  <h3 style="font-weight: 800; color: black">2- Seleccione la cantidad de productos que desea:</h3>
                 </v-col>
                 <v-col cols="8" style="background: ">
                   <center>
@@ -59,7 +59,7 @@
                       </v-icon>
                     </template>
                   </v-slider>
-                  <p>Costo DTC C/U = 20 GLF</p>
+                  <p style="font-weight: 800; color: black">Costo unitario DTC = 20 GLF</p>
                 </v-col>
                 <v-col cols="8" style="background:  ">
                   <center>
@@ -93,12 +93,12 @@
                       </v-icon>
                     </template>
                   </v-slider>
-                  <p>Costo Tarjeta C/U = 5 GLF</p>
+                  <p style="font-weight: 800; color: black">Costo unitario de Tarjeta = 5 GLF</p>
                 </v-col>
               </v-row>
               <v-row class="d-flex justify-center ma-6">
                 <v-col cols="10">
-                  <h3 style="font-weight: 400">3- Verifique el monto, realice el pago y coloque el comprobante del pago:</h3>
+                  <h3 style="font-weight: 800; color: black">3- Verifique el monto, realice el pago y coloque el comprobante del pago:</h3>
                 </v-col>
               </v-row>
               <v-row class="d-flex justify-center ma-6">
@@ -130,7 +130,7 @@
               </v-row>
             </v-col>
             <v-col cols="8" v-else>
-              <h3 style="font-weight: 400">Debe registrar una dirección para poder generar una orden, puede hacerlo dando click en el siguiente enlace:</h3>
+              <h3 style="font-weight: 800; color: black">Debe registrar una dirección para poder generar una orden, puede hacerlo dando click en el siguiente enlace:</h3>
               <br>
               <center>
                 <v-btn color="primary" link to="/ubicacion" text>Registrar Dirección</v-btn>
