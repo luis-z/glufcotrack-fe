@@ -212,6 +212,7 @@ export default {
     async onEnter() {
       await this.registerUser();
     },
+
     async registerUser() {
       try {
         await this.validations();

@@ -1,7 +1,7 @@
 <template>
   <v-row class="d-flex justify-center">
     <Loader v-bind:visible="loading" />
-    <v-col cols="8">
+    <v-col cols="12" md="8">
       <v-card class="mx-auto login-card">
         <v-card-title class="justify-center">Listado de Ordenes</v-card-title>
         <v-card-text>
@@ -26,7 +26,7 @@
                         v-on="on"
                         @click="watchOrder(item)"
                       >
-                        {{item.estatus}}
+                        {{ item.estatus }}
                       </v-chip>
                     </template>
                     <span>Ver en tiempo real</span>
@@ -41,107 +41,111 @@
   </v-row>
 </template>
 <script>
-import Loader from '@/components/Loader.vue'
+import Loader from "@/components/Loader.vue";
 
 export default {
-  name: 'ListarOrdenes',
+  name: "ListarOrdenes",
   components: {
     Loader
   },
-  data () {
+  data() {
     return {
       loading: false,
       headers: [
-        { text: 'ID', value: 'id' },
-        { text: 'Destino', value: 'apodo_ubicacion' },
-        { text: 'Cantidad de DTC', value: 'cantidad_dtc', align: 'center' },
-        { text: 'Cantidad de Tarjetas', value: 'cantidad_tarjeta', align: 'center' },
-        { text: 'Estatus', value: 'estatus', align: 'center' }
+        { text: "ID", value: "id" },
+        { text: "Destino", value: "apodo_ubicacion" },
+        { text: "Cantidad de DTC", value: "cantidad_dtc", align: "center" },
+        {
+          text: "Cantidad de Tarjetas",
+          value: "cantidad_tarjeta",
+          align: "center"
+        },
+        { text: "Estatus", value: "estatus", align: "center" }
       ],
       ordenes: [],
       selected: []
-    }
+    };
   },
-  mounted () {
-    this.loadOrdenes()
+  mounted() {
+    this.loadOrdenes();
   },
   methods: {
-    getColor (estatus) {
+    getColor(estatus) {
       switch (estatus) {
-        case 'EN REVISIÓN':
-          return '#7300f1'
-          break
+        case "EN REVISIÓN":
+          return "#7300f1";
+          break;
 
-        case 'CANCELADA':
-          return 'red'
-          break
+        case "CANCELADA":
+          return "red";
+          break;
 
         default:
-          return 'blue'
-          break
+          return "blue";
+          break;
       }
     },
-    goToCreate () {
-      this.$emit('goToCreate')
+    goToCreate() {
+      this.$emit("goToCreate");
     },
-    handleRow (value) {
-      console.log(value)
+    handleRow(value) {
+      console.log(value);
     },
-    async loadOrdenes () {
+    async loadOrdenes() {
       try {
-        this.loading = true
-        const ordenes = await this.$axios.post('/ordenes/index', {
+        this.loading = true;
+        const ordenes = await this.$axios.post("/ordenes/index", {
           cliente_id: this.$store.state.auth.user.cliente.id
-        })
-        this.ordenes = ordenes.data.data
-        this.loading = false
+        });
+        this.ordenes = ordenes.data.data;
+        this.loading = false;
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async deleteOrden (name) {
-      console.log('delete orden', name)
+    async deleteOrden(name) {
+      console.log("delete orden", name);
       this.$swal
         .fire({
-          title: 'Estas seguro que desea eliminar ' + name,
-          text: 'Esta accion es irrevertible.',
-          icon: 'warning',
+          title: "Estas seguro que desea eliminar " + name,
+          text: "Esta accion es irrevertible.",
+          icon: "warning",
           showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar',
-          cancelButtonText: 'no'
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Si, eliminar",
+          cancelButtonText: "no"
         })
-        .then((result) => {
+        .then(result => {
           if (result.isConfirmed) {
             this.$swal.fire(
-              'Eliminado!',
-              'la orden se a eliminado correctamente',
-              'success'
-            )
+              "Eliminado!",
+              "la orden se a eliminado correctamente",
+              "success"
+            );
           }
-        })
+        });
     },
-    async watchOrder (item) {
-      this.selected = Object.assign({}, item)
+    async watchOrder(item) {
+      this.selected = Object.assign({}, item);
       // logica de remitir a recorrido
-      this.$emit('goToDetalle', this.selected)
+      this.$emit("goToDetalle", this.selected);
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {

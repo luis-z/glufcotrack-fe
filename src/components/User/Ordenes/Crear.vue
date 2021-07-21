@@ -5,16 +5,23 @@
       <v-card class="login-card" v-show="!loading">
         <v-card-text>
           <v-btn color="primary" @click="goToListar">regresar</v-btn>
-          <v-row class="d-flex justify-center ma-6">
-            <v-col cols="8" class="inner-form" v-if="ubicaciones.length > 0">
-              <v-row class="d-flex justify-center ma-6">
-                <v-col cols="10" style="margin: 0.5rem">
+          <v-row class="d-flex justify-center mt-5">
+            <v-col
+              md="8"
+              cols="12"
+              class="inner-form"
+              v-if="ubicaciones.length > 0"
+            >
+              <v-row class="d-flex justify-center">
+                <v-col md="10" cols="12" style="margin: 0.5rem">
                   <h1 style="font-weight: 300">Generar Orden</h1>
                 </v-col>
-                <v-col cols="10">
-                  <h3 style="font-weight: 800; color: black">1- Seleccione el destino de su pedido:</h3>
+                <v-col md="10" cols="12">
+                  <h3 style="font-weight: 800; color: black">
+                    1- Seleccione el destino de su pedido:
+                  </h3>
                 </v-col>
-                <v-col cols="8">
+                <v-col md="8" cols="12">
                   <v-select
                     v-model="selectedUbicacion"
                     :items="ubicaciones"
@@ -24,12 +31,14 @@
                     :loading="loading"
                   ></v-select>
                 </v-col>
-                <v-col cols="10">
-                  <h3 style="font-weight: 800; color: black">2- Seleccione la cantidad de productos que desea:</h3>
+                <v-col md="10" cols="12">
+                  <h3 style="font-weight: 800; color: black">
+                    2- Seleccione la cantidad de productos que desea:
+                  </h3>
                 </v-col>
-                <v-col cols="8" style="background: ">
+                <v-col md="8" cols="12" style="background: ">
                   <center>
-                    <h2>Cantidad de DTC = {{cantidadDtc}}</h2>
+                    <h2>Cantidad de DTC = {{ cantidadDtc }}</h2>
                   </center>
                   <v-slider
                     v-model="cantidadDtc"
@@ -59,11 +68,13 @@
                       </v-icon>
                     </template>
                   </v-slider>
-                  <p style="font-weight: 800; color: black">Costo unitario DTC = 20 GLF</p>
+                  <p style="font-weight: 800; color: black">
+                    Costo unitario DTC = 20 GLF
+                  </p>
                 </v-col>
-                <v-col cols="8" style="background:  ">
+                <v-col md="8" cols="12" style="background:  ">
                   <center>
-                    <h2>Cantidad de Tarjetas = {{cantidadTarjeta}}</h2>
+                    <h2>Cantidad de Tarjetas = {{ cantidadTarjeta }}</h2>
                   </center>
                   <v-slider
                     v-model="cantidadTarjeta"
@@ -93,16 +104,21 @@
                       </v-icon>
                     </template>
                   </v-slider>
-                  <p style="font-weight: 800; color: black">Costo unitario de Tarjeta = 5 GLF</p>
+                  <p style="font-weight: 800; color: black">
+                    Costo unitario de Tarjeta = 5 GLF
+                  </p>
                 </v-col>
               </v-row>
-              <v-row class="d-flex justify-center ma-6">
-                <v-col cols="10">
-                  <h3 style="font-weight: 800; color: black">3- Verifique el monto, realice el pago y coloque el comprobante del pago:</h3>
+              <v-row class="d-flex justify-center">
+                <v-col md="10" cols="12">
+                  <h3 style="font-weight: 800; color: black">
+                    3- Verifique el monto, realice el pago y coloque el
+                    comprobante del pago:
+                  </h3>
                 </v-col>
               </v-row>
-              <v-row class="d-flex justify-center ma-6">
-                <v-col cols="3">
+              <v-row class="d-flex justify-center">
+                <v-col md="3" cols="6">
                   <v-text-field
                     outlined
                     label="Total a Pagar"
@@ -110,7 +126,7 @@
                     readonly
                   ></v-text-field>
                 </v-col>
-                <v-col cols="5">
+                <v-col md="5" cols="6">
                   <v-text-field
                     v-model="comprobantePago"
                     :loading="loading"
@@ -121,19 +137,28 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
-              <v-row class="d-flex justify-center ma-6">
-                <v-col cols="2">
+              <v-row class="d-flex justify-center">
+                <v-col
+                  md="2"
+                  cols="12"
+                  style="display:flex;justify-content:center"
+                >
                   <v-btn @click="createOrden" :loading="loading">
                     enviar
                   </v-btn>
                 </v-col>
               </v-row>
             </v-col>
-            <v-col cols="8" v-else>
-              <h3 style="font-weight: 800; color: black">Debe registrar una dirección para poder generar una orden, puede hacerlo dando click en el siguiente enlace:</h3>
-              <br>
+            <v-col md="8" cols="12" class="mt-6" v-else>
+              <h3 style="font-weight: 800; color: black">
+                Debe registrar una dirección para poder generar una orden, puede
+                hacerlo dando click en el siguiente enlace:
+              </h3>
+              <br />
               <center>
-                <v-btn color="primary" link to="/ubicacion" text>Registrar Dirección</v-btn>
+                <v-btn color="primary" link to="/ubicacion" text
+                  >Registrar Dirección</v-btn
+                >
               </center>
             </v-col>
           </v-row>
@@ -144,102 +169,101 @@
 </template>
 
 <script>
-import Loader from '@/components/Loader.vue'
+import Loader from "@/components/Loader.vue";
 
 export default {
-  name: 'CrearOrden',
+  name: "CrearOrden",
   components: {
     Loader
   },
-  data () {
+  data() {
     return {
       loading: false,
-      cantidadDtc: '',
-      cantidadTarjeta: '',
-      ubicacion: '',
-      comprobantePago: '',
+      cantidadDtc: "",
+      cantidadTarjeta: "",
+      ubicacion: "",
+      comprobantePago: "",
       ubicaciones: [],
-      selectedUbicacion: '',
-      totalPago: '0.00 GLF'
-    }
+      selectedUbicacion: "",
+      totalPago: "0.00 GLF"
+    };
   },
-  mounted () {
-    this.loadData()
+  mounted() {
+    this.loadData();
   },
   methods: {
-    decrement (product) {
+    decrement(product) {
       switch (product) {
         case 1:
-
           if (this.cantidadDtc <= 0) {
-            return
+            return;
           }
-          this.cantidadDtc--
-          break
+          this.cantidadDtc--;
+          break;
 
         default:
           if (this.cantidadTarjeta <= 0) {
-            return
+            return;
           }
-          this.cantidadTarjeta--
-          break
+          this.cantidadTarjeta--;
+          break;
       }
 
-      this.updatePayment()
+      this.updatePayment();
     },
-    increment (product) {
+    increment(product) {
       switch (product) {
         case 1:
-          this.cantidadDtc++
-          break
+          this.cantidadDtc++;
+          break;
 
         default:
           if (this.cantidadTarjeta >= 20) {
-            return
+            return;
           }
-          this.cantidadTarjeta++
-          break
+          this.cantidadTarjeta++;
+          break;
       }
-      this.updatePayment()
+      this.updatePayment();
     },
-    async onEnter () {
-      await this.createOrden()
+    async onEnter() {
+      await this.createOrden();
     },
-    async createOrden () {
+    async createOrden() {
       try {
         if (this.selectedUbicacion.length <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'La Ubicación es requerida.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "La Ubicación es requerida.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
-        if (this.comprobantePago == '' || this.comprobantePago.length <= 0) {
+        if (this.comprobantePago == "" || this.comprobantePago.length <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'El Comprobante de Pago es requerido.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "El Comprobante de Pago es requerido.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
-        const totalFormateado = parseFloat(this.totalPago)
+        const totalFormateado = parseFloat(this.totalPago);
 
         if (totalFormateado <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'Debe seleccionar al menos un producto un producto.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "Debe seleccionar al menos un producto un producto.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
-        this.loading = true
+        this.loading = true;
 
         const body = {
           cliente_id: this.$store.state.auth.user.cliente.id,
@@ -247,87 +271,89 @@ export default {
           cantidad_dtc: this.cantidadDtc,
           cantidad_tarjeta: this.cantidadTarjeta,
           comprobante_pago: this.comprobantePago
-        }
+        };
 
         // console.log(body);
 
         // return
 
         // validaciones
-        const create = await this.$axios.post('ordenes/create', body)
+        const create = await this.$axios.post("ordenes/create", body);
 
-        this.loading = false
+        this.loading = false;
 
         this.$notify({
-          title: 'Exito',
+          title: "Exito",
           text: create.data.data,
-          type: 'success'
-        })
+          type: "success"
+        });
 
-        this.goToListar()
+        this.goToListar();
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async loadData () {
+    async loadData() {
       try {
-        this.loading = true
-        const ubicaciones = await this.$axios.post('/ubicaciones/index', {
+        this.loading = true;
+        const ubicaciones = await this.$axios.post("/ubicaciones/index", {
           cliente_id: this.$store.state.auth.user.cliente.id
-        })
-        this.ubicaciones = ubicaciones.data.data
-        this.loading = false
+        });
+        this.ubicaciones = ubicaciones.data.data;
+        this.loading = false;
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async updatePayment () {
-      const totalDtc = parseFloat(this.cantidadDtc) * 20
-      console.log(totalDtc)
-      const totalTarjetas = parseFloat(this.cantidadTarjeta) * 1
-      console.log(totalTarjetas)
-      this.totalPago = totalDtc + totalTarjetas
-      console.log(this.totalPago)
-      this.totalPago = this.totalPago.toFixed(2) + ' GLF'
+    async updatePayment() {
+      const totalDtc = parseFloat(this.cantidadDtc) * 20;
+      console.log(totalDtc);
+      const totalTarjetas = parseFloat(this.cantidadTarjeta) * 1;
+      console.log(totalTarjetas);
+      this.totalPago = totalDtc + totalTarjetas;
+      console.log(this.totalPago);
+      this.totalPago = this.totalPago.toFixed(2) + " GLF";
     },
-    async goToListar () {
-      this.$emit('goToListar')
+    async goToListar() {
+      this.$emit("goToListar");
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {
   margin-top: 2rem;
 }
 
-#mapid { height: 450px; }
+#mapid {
+  height: 450px;
+}
 
 .inner-form {
   background-color: rgba(211, 220, 236, 0.658);

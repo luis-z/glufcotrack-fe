@@ -1,3 +1,14 @@
 .swal2-popup {
   font-family: Georgia, serif;
 }
+
+@media (max-width: 768px) {
+  .vue-notification-group {
+    width: 100% !important;
+    left: 0 !important;
+  }
+}
+
+header {
+  z-index: 100000000 !important;
+}

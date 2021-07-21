@@ -1,15 +1,18 @@
 <template>
   <v-row justify="center">
     <Loader v-bind:visible="loading" />
-    <v-col cols="6">
-      <v-card style="padding:2rem">
+    <v-col cols="12" md="6">
+      <v-card style="padding:2rem 1rem">
         <v-row justify="center">
-          <v-col cols="8" justify="center">
-            <p>Debe verificar su correo electrónico para realizar cualquier acción dentro del sistema.</p>
+          <v-col cols="12" md="8" justify="center">
+            <p style="text-align:center">
+              Debe verificar su correo electrónico para realizar cualquier
+              acción dentro del sistema.
+            </p>
           </v-col>
         </v-row>
         <v-row justify="center" align="center">
-          <v-col cols="6">
+          <v-col cols="12" md="6" style="display:flex; justify-content: center">
             <v-text-field
               v-model="token"
               label="Código de verificación"
@@ -22,9 +25,9 @@
               :loading="loading"
             ></v-text-field>
           </v-col>
-          <v-col cols="2">
+          <v-col cols="12" md="6" style="display:flex; justify-content: center">
             <v-btn
-              style="margin-bottom:2rem;"
+              style="margin-bottom:1rem;"
               color="primary"
               @click="confirmToken"
               :loading="loading"
@@ -33,8 +36,12 @@
             </v-btn>
           </v-col>
         </v-row>
-        <v-row justify="center">
-          <v-col cols="6">
+        <v-row>
+          <v-col
+            cols="12"
+            md="12"
+            style="display:flex; justify-content: center"
+          >
             <a @click="resend"><p>Reenviar correo de verificación</p></a>
           </v-col>
         </v-row>
@@ -43,10 +50,10 @@
   </v-row>
 </template>
 <script>
-import Loader from '@/components/Loader.vue'
+import Loader from "@/components/Loader.vue";
 
 export default {
-  name: 'EmailVerification',
+  name: "EmailVerification",
   components: {
     Loader
   },
@@ -54,97 +61,97 @@ export default {
     visible: Boolean
   },
   data: () => ({
-    token: '',
+    token: "",
     loading: false
   }),
   methods: {
-    async resend () {
-      console.log('resend')
-      this.loading = true
+    async resend() {
+      console.log("resend");
+      this.loading = true;
       try {
-        const sended = await this.$axios.post('reenviarcorreoverificacion')
-        console.log(sended)
-        this.loading = false
+        const sended = await this.$axios.post("reenviarcorreoverificacion");
+        console.log(sended);
+        this.loading = false;
         this.$notify({
-          title: 'Reenvio Exitoso',
-          text: '',
-          type: 'success'
-        })
+          title: "Reenvio Exitoso",
+          text: "",
+          type: "success"
+        });
       } catch (error) {
-        console.log(error.response.data)
-        this.loading = false
+        console.log(error.response.data);
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async onEnter () {
-      await this.confirmToken()
+    async onEnter() {
+      await this.confirmToken();
     },
-    async confirmToken () {
-      console.log('confirm token')
+    async confirmToken() {
+      console.log("confirm token");
 
-      if (this.token == '' || this.token.length <= 0) {
+      if (this.token == "" || this.token.length <= 0) {
         this.$notify({
-          title: 'Error',
-          text: 'El código es requerido.',
-          type: 'error'
-        })
+          title: "Error",
+          text: "El código es requerido.",
+          type: "error"
+        });
 
-        return
+        return;
       }
 
       if (this.token.length !== 5) {
         this.$notify({
-          title: 'Error',
-          text: 'El código debe tener 5 dígitos.',
-          type: 'error'
-        })
-        return
+          title: "Error",
+          text: "El código debe tener 5 dígitos.",
+          type: "error"
+        });
+        return;
       }
 
-      this.loading = true
+      this.loading = true;
       try {
         const body = {
           token: this.token
-        }
-        const sended = await this.$axios.post('verificarcorreo', body)
-        console.log(sended)
-        this.$emit('userData')
+        };
+        const sended = await this.$axios.post("verificarcorreo", body);
+        console.log(sended);
+        this.$emit("userData");
         // this.loading = false
         this.$notify({
-          title: 'Confimación Exitosa',
-          text: '',
-          type: 'success'
-        })
+          title: "Confimación Exitosa",
+          text: "",
+          type: "success"
+        });
       } catch (error) {
-        console.log(error.response.data)
-        this.loading = false
+        console.log(error.response.data);
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     }
   }
-}
+};
 </script>

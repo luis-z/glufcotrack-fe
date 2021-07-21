@@ -6,8 +6,7 @@
         <v-card class="mx-auto login-card">
           <v-card-text>
             <v-btn color="primary" @click="goToListar">regresar</v-btn>
-            <v-row class="d-flex justify-center ma-6">
-
+            <v-row class="d-flex justify-center">
               <v-col cols="12" md="8" xs="12">
                 <Trayecto
                   :destino="ordenData.coordenadas"
@@ -15,11 +14,13 @@
                 />
               </v-col>
 
-              <v-col cols="4" md="4" xs="12">
-                <v-row class="d-flex justify-center ma-6 inner-form">
+              <v-col cols="12" md="4" xs="12">
+                <v-row class="d-flex justify-center inner-form">
                   <v-col cols="10" xs="6" style="margin: 0.5rem">
                     <center>
-                      <h1 style="font-weight: 300">Orden N# {{ordenData.id}}</h1>
+                      <h1 style="font-weight: 300">
+                        Orden N# {{ ordenData.id }}
+                      </h1>
                     </center>
                   </v-col>
                   <v-col cols="12">
@@ -28,10 +29,10 @@
                         mdi-bell-ring-outline
                       </v-icon>
                       <h2><span v-html="notificationMsg"></span></h2>
-                      <br>
+                      <br />
                       <v-btn large @click="updateStatus">
                         <v-icon large style="margin: 1rem" :color="iconColor">
-                          {{this.icon}}
+                          {{ this.icon }}
                         </v-icon>
                       </v-btn>
                     </center>
@@ -47,18 +48,18 @@
 </template>
 
 <script>
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
-import Loader from '@/components/Loader.vue'
-import Trayecto from '@/components/Mapa/Trayecto.vue'
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import Loader from "@/components/Loader.vue";
+import Trayecto from "@/components/Mapa/Trayecto.vue";
 
 export default {
-  name: 'RealizarEntrega',
+  name: "RealizarEntrega",
   components: {
     Loader,
     Trayecto
   },
-  data () {
+  data() {
     return {
       loading: false,
       recorridos: [],
@@ -67,194 +68,197 @@ export default {
       map: null,
       center: [10.496584, -66.845662],
       currentPosition: [],
-      notificationMsg: '',
-      icon: '',
-      iconColor: '',
+      notificationMsg: "",
+      icon: "",
+      iconColor: "",
       ordenData: {}
-    }
+    };
   },
   props: {
     // value: Boolean,
     data: Object
   },
   watch: {
-    ordenData: function () {
-
+    ordenData: function() {
       switch (this.ordenData.estatus) {
         case 2:
-          this.notificationMsg = 'Notificar al cliente <br> la salida de su orden'
-          this.icon = 'mdi-bike-fast'
-          this.iconColor = '#7300f1'
+          this.notificationMsg =
+            "Notificar al cliente <br> la salida de su orden";
+          this.icon = "mdi-bike-fast";
+          this.iconColor = "#7300f1";
           break;
         case 4:
-          this.notificationMsg = 'Notificar al cliente <br> la llegada al destino de su orden'
-          this.icon = 'mdi-home-map-marker'
-          this.iconColor = '#7300f1'
+          this.notificationMsg =
+            "Notificar al cliente <br> la llegada al destino de su orden";
+          this.icon = "mdi-home-map-marker";
+          this.iconColor = "#7300f1";
           break;
         case 5:
-          this.notificationMsg = 'Notificar al cliente <br> la culminación de su orden'
-          this.icon = 'mdi-checkbox-multiple-marked-circle-outline'
-          this.iconColor = 'blue'
+          this.notificationMsg =
+            "Notificar al cliente <br> la culminación de su orden";
+          this.icon = "mdi-checkbox-multiple-marked-circle-outline";
+          this.iconColor = "blue";
           break;
-      
+
         default:
           break;
       }
-      this.placeMarker(this.deliveryPosition)
+      this.placeMarker(this.deliveryPosition);
     }
   },
-  mounted () {
-    this.loadData()
+  mounted() {
+    this.loadData();
   },
   methods: {
     async getCurrentPosition() {
-      var self = this
+      var self = this;
       setInterval(function() {
         navigator.geolocation.getCurrentPosition(function(position) {
           console.log(position.coords.latitude, position.coords.longitude);
 
-          self.currentPosition = [position.coords.latitude, position.coords.longitude]
+          self.currentPosition = [
+            position.coords.latitude,
+            position.coords.longitude
+          ];
 
           // self.placeMarker([position.coords.latitude, position.coords.longitude])
           // await self.saveCurrentPosition()
-
         });
       }, 10000);
     },
-    async placeMarker (coordenadas)
-    {
+    async placeMarker(coordenadas) {
       if (this.marker) {
-        this.map.removeLayer(this.marker)
+        this.map.removeLayer(this.marker);
       }
 
-      this.currentPosition = coordenadas
-      await this.saveCurrentPosition()
+      this.currentPosition = coordenadas;
+      await this.saveCurrentPosition();
 
       var GlufcoIcon = L.icon({
-        iconUrl: '../img/GLUFCOIN.svg',
+        iconUrl: "../img/GLUFCOIN.svg",
         iconSize: [60, 61], // size of the icon
         iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
         popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
-      })
+      });
 
-      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map)
+      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map);
     },
     async saveCurrentPosition() {
       try {
-        this.loading = true
+        this.loading = true;
 
-        await this.$axios.post('recorridos/create',{
+        await this.$axios.post("recorridos/create", {
           orden_id: this.ordenData.id,
           coordenadas: this.currentPosition.toString()
-        })
+        });
 
-        this.loading = false
-
+        this.loading = false;
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async onEnter () {
-      await this.createUbicacion()
+    async onEnter() {
+      await this.createUbicacion();
     },
-    async loadData () {
-      this.loading = true
+    async loadData() {
+      this.loading = true;
       try {
-        const recorridos = await this.$axios.post('recorridos/index',{
+        const recorridos = await this.$axios.post("recorridos/index", {
           orden_id: this.data.id
-        })
+        });
 
-        const orden = await this.$axios.post('ordenes/detalle',{
+        const orden = await this.$axios.post("ordenes/detalle", {
           orden_id: this.data.id
-        })
+        });
 
-        this.recorridos = recorridos.data.data
-        this.ordenData = orden.data.data
+        this.recorridos = recorridos.data.data;
+        this.ordenData = orden.data.data;
 
         // await this.setupLeafletMap()
-        await this.getCurrentPosition()
-        this.loading = false
-
+        await this.getCurrentPosition();
+        this.loading = false;
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async updateStatus () {
+    async updateStatus() {
       try {
-        this.loading = true
+        this.loading = true;
 
-        if ( this.ordenData.estatus === 2 ) {
-          this.ordenData.estatus = this.ordenData.estatus + 1 
+        if (this.ordenData.estatus === 2) {
+          this.ordenData.estatus = this.ordenData.estatus + 1;
         }
-        
-        const update = await this.$axios.post('ordenes/update',{
+
+        const update = await this.$axios.post("ordenes/update", {
           orden_id: this.ordenData.id,
           estatus: parseFloat(this.ordenData.estatus) + 1
-        })
+        });
 
         this.$notify({
-          title: 'Exito',
+          title: "Exito",
           text: update.data.data,
-          type: 'success'
-        })
+          type: "success"
+        });
 
-        this.loading = false
-        await this.loadData()
+        this.loading = false;
+        await this.loadData();
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async goToListar () {
-      this.$emit('goToListar')
+    async goToListar() {
+      this.$emit("goToListar");
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {
   margin-top: 2rem;
 }
 
-#mapid { height: 450px; }
+#mapid {
+  height: 450px;
+}
 
 .inner-form {
   background-color: rgba(211, 220, 236, 0.658);

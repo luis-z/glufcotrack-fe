@@ -2,21 +2,18 @@
   <v-container fluid>
     <v-row class="d-flex justify-center">
       <Loader v-bind:visible="loading" />
-      <v-col cols="8">
+      <v-col md="8" cols="12">
         <v-card class="mx-auto login-card">
           <v-card-title class="justify-center">Mis Direcciones</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="2">
-                <v-btn
-                  color="primary"
-                  @click="gotToCreate"
-                >
+              <v-col cols="12" md="2">
+                <v-btn color="primary" @click="gotToCreate">
                   Registrar Dirección
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row class="d-flex justify-center ma-6">
+            <v-row class="d-flex justify-center mb-5">
               <template>
                 <v-data-table
                   :headers="headers"
@@ -68,141 +65,144 @@
   </v-container>
 </template>
 <script>
-import Loader from '@/components/Loader.vue'
-import DetalleUbicacion from '@/components/User/Ubicacion/Detalle.vue'
+import Loader from "@/components/Loader.vue";
+import DetalleUbicacion from "@/components/User/Ubicacion/Detalle.vue";
 
 export default {
-  name: 'ListarUbicaciones',
+  name: "ListarUbicaciones",
   components: {
     Loader,
     DetalleUbicacion
   },
-  data () {
+  data() {
     return {
       loading: false,
       headers: [
-        { text: 'ID', value: 'id' },
-        { text: 'Apodo', value: 'apodo' },
-        { text: 'Estatus', value: 'estatus' },
-        { text: 'Ubicación en el mapa', value: 'map', align: 'center' }
+        { text: "ID", value: "id" },
+        { text: "Apodo", value: "apodo" },
+        { text: "Estatus", value: "estatus" },
+        { text: "Ubicación en el mapa", value: "map", align: "center" }
       ],
       ubicaciones: [],
       dialog: false,
       ubicacionData: {},
       selected: []
-    }
+    };
   },
-  mounted () {
-    this.loadUbicaciones()
+  mounted() {
+    this.loadUbicaciones();
   },
   methods: {
-    getColor (estatus) {
+    getColor(estatus) {
       switch (estatus) {
         case true:
-          return 'blue'
-          break
+          return "blue";
+          break;
 
         default:
-          return 'red'
-          break
+          return "red";
+          break;
       }
     },
-    async changeStatus (item) {
-      this.selected = Object.assign({}, item)
+    async changeStatus(item) {
+      this.selected = Object.assign({}, item);
 
-      this.selected.estatus = !this.selected.estatus
+      this.selected.estatus = !this.selected.estatus;
 
       try {
-        this.loading = true
-        const updated = await this.$axios.post('/ubicaciones/update', this.selected)
+        this.loading = true;
+        const updated = await this.$axios.post(
+          "/ubicaciones/update",
+          this.selected
+        );
 
         this.$notify({
-          title: 'Exito',
+          title: "Exito",
           text: updated.data.data,
-          type: 'success'
-        })
+          type: "success"
+        });
 
-        await this.loadUbicaciones()
+        await this.loadUbicaciones();
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async showDetail (value) {
-      this.ubicacionData = Object.assign({}, value)
-      this.dialog = true
+    async showDetail(value) {
+      this.ubicacionData = Object.assign({}, value);
+      this.dialog = true;
     },
-    async closeDetail () {
-      this.dialog = false
+    async closeDetail() {
+      this.dialog = false;
     },
-    async loadUbicaciones () {
+    async loadUbicaciones() {
       try {
-        this.loading = true
-        const ubicaciones = await this.$axios.post('/ubicaciones/index', {
+        this.loading = true;
+        const ubicaciones = await this.$axios.post("/ubicaciones/index", {
           cliente_id: this.$store.state.auth.user.cliente.id
-        })
-        this.ubicaciones = ubicaciones.data.data
-        this.loading = false
+        });
+        this.ubicaciones = ubicaciones.data.data;
+        this.loading = false;
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    async deleteOrden (name) {
-      console.log('delete orden', name)
+    async deleteOrden(name) {
+      console.log("delete orden", name);
       this.$swal
         .fire({
-          title: 'Estas seguro que desea eliminar ' + name,
-          text: 'Esta accion es irrevertible.',
-          icon: 'warning',
+          title: "Estas seguro que desea eliminar " + name,
+          text: "Esta accion es irrevertible.",
+          icon: "warning",
           showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Si, eliminar',
-          cancelButtonText: 'no'
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Si, eliminar",
+          cancelButtonText: "no"
         })
         .then(result => {
           if (result.isConfirmed) {
             this.$swal.fire(
-              'Eliminado!',
-              'la orden se a eliminado correctamente',
-              'success'
-            )
+              "Eliminado!",
+              "la orden se a eliminado correctamente",
+              "success"
+            );
           }
-        })
+        });
     },
-    async editOrden () {
-      console.log('edit orden')
+    async editOrden() {
+      console.log("edit orden");
     },
-    async gotToCreate () {
-      this.$emit('goToCreate')
+    async gotToCreate() {
+      this.$emit("goToCreate");
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {

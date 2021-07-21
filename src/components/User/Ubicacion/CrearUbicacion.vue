@@ -5,16 +5,18 @@
       <v-card class="mx-auto login-card">
         <v-card-text>
           <v-btn color="primary" @click="goToListar">regresar</v-btn>
-          <v-row class="d-flex justify-center ma-6">
-            <v-col cols="8">
+          <v-row class="d-flex justify-center mt-3">
+            <v-col md="8" cols="12">
               <div id="mapid"></div>
             </v-col>
-            <v-col cols="4">
-              <v-row class="d-flex justify-center ma-6 inner-form">
-                <v-col cols="10" style="margin: 0.5rem">
-                  <h1 style="font-weight: 300">Registrar Dirección</h1>
+            <v-col md="4" cols="12">
+              <v-row class="d-flex justify-center">
+                <v-col cols="12" md="10" style="margin: 0.5rem">
+                  <h1 style="font-weight: 300" class="mt-3">
+                    Registrar Dirección
+                  </h1>
                 </v-col>
-                <v-col cols="8">
+                <v-col cols="12" md="8">
                   <v-text-field
                     outlined
                     v-model="apodo"
@@ -25,7 +27,7 @@
                     required
                   ></v-text-field>
                 </v-col>
-                <v-col cols="8">
+                <v-col cols="12" md="8">
                   <v-textarea
                     outlined
                     v-model="direccion"
@@ -50,151 +52,158 @@
 </template>
 
 <script>
-import 'leaflet/dist/leaflet.css'
-import L from 'leaflet'
-import Loader from '@/components/Loader.vue'
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import Loader from "@/components/Loader.vue";
 
 export default {
-  name: 'CrearUbicacion',
+  name: "CrearUbicacion",
   components: {
     Loader
   },
-  data () {
+  data() {
     return {
       loading: false,
-      apodo: '',
-      direccion: '',
+      apodo: "",
+      direccion: "",
       coordenadas: [],
       center: [10.496584, -66.845662]
-    }
+    };
   },
-  mounted () {
-    this.setupLeafletMap()
+  mounted() {
+    this.setupLeafletMap();
   },
   methods: {
-    async onEnter () {
-      await this.createUbicacion()
+    async onEnter() {
+      await this.createUbicacion();
     },
-    async createUbicacion () {
+    async createUbicacion() {
       try {
-        if (this.apodo == '' || this.apodo.length <= 0) {
+        if (this.apodo == "" || this.apodo.length <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'El apodo es requerido.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "El apodo es requerido.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
-        if (this.direccion == '' || this.direccion.length <= 0) {
+        if (this.direccion == "" || this.direccion.length <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'La dirección es requerida.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "La dirección es requerida.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
         if (this.coordenadas.length <= 0) {
           this.$notify({
-            title: 'Error',
-            text: 'Debe seleccionar una ubicación en el mapa.',
-            type: 'error'
-          })
+            title: "Error",
+            text: "Debe seleccionar una ubicación en el mapa.",
+            type: "error"
+          });
 
-          return
+          return;
         }
 
-        this.loading = true
+        this.loading = true;
 
         const body = {
           cliente_id: this.$store.state.auth.user.cliente.id,
           apodo: this.apodo,
           direccion: this.direccion,
           coordenadas: this.coordenadas.toString()
-        }
+        };
 
-        console.log(body)
+        console.log(body);
 
         // validaciones
-        const create = await this.$axios.post('ubicaciones/create', body)
+        const create = await this.$axios.post("ubicaciones/create", body);
 
-        this.loading = false
+        this.loading = false;
 
         this.$notify({
-          title: 'Exito',
+          title: "Exito",
           text: create.data.data,
-          type: 'success'
-        })
+          type: "success"
+        });
 
-        this.goToListar()
+        this.goToListar();
       } catch (error) {
-        this.loading = false
+        this.loading = false;
         if (error.response) {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.response.data.data,
-            type: 'error'
-          })
+            type: "error"
+          });
         } else {
           this.$notify({
-            title: 'Error',
+            title: "Error",
             text: error.message,
-            type: 'error'
-          })
+            type: "error"
+          });
         }
       }
     },
-    setupLeafletMap () {
-      var mymap = L.map('mapid').setView(this.center, 13)
-      L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        maxZoom: 18,
-        id: 'mapbox/streets-v11',
-        tileSize: 512,
-        zoomOffset: -1,
-        accessToken: 'pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ'
-      }).addTo(mymap)
+    setupLeafletMap() {
+      var mymap = L.map("mapid").setView(this.center, 13);
+      L.tileLayer(
+        "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
+        {
+          attribution:
+            'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+          maxZoom: 18,
+          id: "mapbox/streets-v11",
+          tileSize: 512,
+          zoomOffset: -1,
+          accessToken:
+            "pk.eyJ1IjoibGF6bSIsImEiOiJjazBvNG1mbWcwNnd4M21vYnR2NGJpZHR1In0.lxUwxubMbmT4-vSzJRwJIQ"
+        }
+      ).addTo(mymap);
 
-      var marker
-      self = this
+      var marker;
+      self = this;
 
-      mymap.on('click', function (e) {
-        const lat = e.latlng.lat
-        const lng = e.latlng.lng
+      mymap.on("click", function(e) {
+        const lat = e.latlng.lat;
+        const lng = e.latlng.lng;
         /*
           para evitar tener multiples markers en el mapa
         */
         if (marker) {
-          mymap.removeLayer(marker)
+          mymap.removeLayer(marker);
         }
 
         var GlufcoIcon = L.icon({
-          iconUrl: '../img/home.png',
+          iconUrl: "../img/home.png",
           iconSize: [60, 61], // size of the icon
           iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
           popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
-        })
+        });
 
-        self.coordenadas = [lat, lng]
+        self.coordenadas = [lat, lng];
 
-        marker = L.marker(self.coordenadas, { icon: GlufcoIcon }).addTo(mymap)
-      })
+        marker = L.marker(self.coordenadas, { icon: GlufcoIcon }).addTo(mymap);
+      });
     },
-    async goToListar () {
-      this.$emit('goToListar')
+    async goToListar() {
+      this.$emit("goToListar");
     }
   }
-}
+};
 </script>
 <style scoped>
 .login-card {
   margin-top: 2rem;
 }
 
-#mapid { height: 450px; }
+#mapid {
+  height: 450px;
+}
 
 .inner-form {
   background-color: rgba(211, 220, 236, 0.658);

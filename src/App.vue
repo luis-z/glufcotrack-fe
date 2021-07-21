@@ -69,44 +69,44 @@
 
 <script>
 export default {
-  name: 'App',
+  name: "App",
 
   data: () => ({}),
   computed: {
-    currentRouteName () {
-      return this.$route.name
+    currentRouteName() {
+      return this.$route.name;
     },
-    currentUser () {
-      return this.$store.state.auth.user
+    currentUser() {
+      return this.$store.state.auth.user;
     },
-    showAdminBoard () {
+    showAdminBoard() {
       if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_ADMIN')
+        return this.currentUser.roles.includes("ROLE_ADMIN");
       }
 
-      return false
+      return false;
     },
-    showModeratorBoard () {
+    showModeratorBoard() {
       if (this.currentUser && this.currentUser.roles) {
-        return this.currentUser.roles.includes('ROLE_MODERATOR')
+        return this.currentUser.roles.includes("ROLE_MODERATOR");
       }
 
-      return false
+      return false;
     }
   },
   methods: {
-    goHome () {
-      this.$router.push('/')
+    goHome() {
+      this.$router.push("/");
     },
-    logOut () {
-      this.$store.dispatch('auth/logout')
-      this.$router.push('/')
+    logOut() {
+      this.$store.dispatch("auth/logout");
+      this.$router.push("/");
     },
-    goRegister () {
-      this.$router.push('/registro')
+    goRegister() {
+      this.$router.push("/registro");
     }
   }
-}
+};
 </script>
 <style lang="scss">
 @import "~sweetalert2/src/variables";
@@ -124,16 +124,17 @@ $swal2-background: #990000;
 
 @font-face {
   font-family: "Ubuntu";
-  src: local("Ubuntu"),
-   url(./assets/fonts/Ubuntu-Light.ttf) format("truetype");
+  src: local("Ubuntu"), url(./assets/fonts/Ubuntu-Light.ttf) format("truetype");
 }
 
-.swal2-title, .swal2-deny, .swal2-confirm, .swal2-cancel {
-  font-family: Ubuntu!important;
+.swal2-title,
+.swal2-deny,
+.swal2-confirm,
+.swal2-cancel {
+  font-family: Ubuntu !important;
 }
 
 .v-application {
-  font-family: Ubuntu!important;
+  font-family: Ubuntu !important;
 }
-
 </style>
