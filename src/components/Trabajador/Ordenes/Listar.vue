@@ -5,6 +5,17 @@
       <v-card class="mx-auto login-card">
         <v-card-title class="justify-center">Listado de Ordenes</v-card-title>
         <v-card-text>
+          <v-row>
+              <v-col cols="2">
+                <a :href="`${this.$backend}ordenesexport`">
+                  <v-btn
+                    color="primary"
+                  >
+                    Imprimir Reporte
+                  </v-btn>
+                </a>
+              </v-col>
+            </v-row>
           <v-row class="d-flex justify-center ma-6">
             <v-col cols="12">
               <v-data-table
@@ -65,7 +76,7 @@
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn
                         dense
-                        :color="item.estatus !== 'CANCELADA' ? 'red' : 'lightgray'"
+                        :color="item.estatus === 'CANCELADA' ? 'lightgray' : item.estatus === 'COMPLETADO' ? 'lightgray' : 'red'"
                         dark
                         @click="if (item.estatus !== 'CANCELADA') CancelarOrden(item)"
                       >

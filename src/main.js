@@ -44,6 +44,7 @@ axiosInstance.interceptors.response.use(
 axiosInstance.defaults.headers.common.Authorization = 'Bearer ' + token
 
 Vue.prototype.$axios = axiosInstance
+Vue.prototype.$backend = url
 Vuex.Store.prototype.$axios = axiosInstance
 Vuex.Store.prototype.$router = router
 

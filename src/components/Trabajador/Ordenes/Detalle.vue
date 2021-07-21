@@ -119,7 +119,7 @@ export default {
           // await self.saveCurrentPosition()
 
         });
-      }, 20000);
+      }, 10000);
     },
     async placeMarker (coordenadas)
     {

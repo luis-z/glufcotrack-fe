@@ -86,6 +86,11 @@ export default {
           this.icon = 'mdi-clock-alert-outline'
           this.iconColor = '#7300f1'
           break;
+        case 3:
+          this.notificationMsg = 'Su orden ha sido cancelada.'
+          this.icon = 'mdi-cancel'
+          this.iconColor = 'red'
+          break;
         case 4:
           this.notificationMsg = 'Su orden va en camino.'
           this.icon = 'mdi-bike-fast'
@@ -124,7 +129,7 @@ export default {
           // await self.saveCurrentPosition()
 
         });
-      }, 20000);
+      }, 10000);
     },
     async placeMarker (coordenadas)
     {
