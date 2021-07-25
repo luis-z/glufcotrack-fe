@@ -32,6 +32,14 @@
               ></v-text-field>
             </v-col>
           </v-row>
+          <v-row class="d-flex justify-center">
+            <v-col cols="10">
+              <center>
+                Si no recuerda sus credenciales o se equivoco en el registro por favor comuniquese al correo del administrador: 
+                  <span style="color:blue">lazm.dev@gmail.com</span>
+              </center>
+            </v-col>
+          </v-row>
           <v-row>
             <v-col class="d-flex justify-center">
               <v-btn @click="login()" :loading="loading">Iniciar Sesión</v-btn>
@@ -74,14 +82,26 @@ export default {
         this.loading = true;
 
         const user = {
-          email: this.email,
+          email: this.email.toLowerCase(),
           password: this.password
         };
 
         await this.$store.dispatch("auth/login", user);
 
         await this.$store.dispatch("auth/userData");
-        this.$router.push("/ordenes");
+
+        switch (this.$store.state.auth.user.rol) {
+          case 2:
+          case 1:
+            // TRABAJADOR
+            this.$router.push("/trabajador/ordenes");
+            break;
+        
+          case 3:
+            // CLIENT
+            this.$router.push("/ordenes");
+            break;
+        }
 
         this.loading = false;
 

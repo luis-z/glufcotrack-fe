@@ -112,6 +112,8 @@ export default {
       loading: false,
       headers: [
         { text: "ID", value: "id" },
+        { text: "Nombre del Cliente", value: "cliente_name" },
+        { text: "Documento de Identficación del Cliente", value: "client_document" },
         { text: "Destino", value: "apodo_ubicacion" },
         { text: "Cantidad de DTC", value: "cantidad_dtc", align: "center" },
         {
@@ -205,6 +207,7 @@ export default {
         this.loading = true;
         const update = await this.$axios.post("/ordenes/update", {
           orden_id: this.selected.id,
+          trabajador_id: this.$store.state.auth.user.trabajador.id,
           estatus: 2 // en proceso
         });
 
@@ -287,7 +290,7 @@ export default {
       try {
         this.loading = true;
         const ordenes = await this.$axios.post("/ordenes/index", {
-          cliente_id: this.$store.state.auth.user.cliente.id
+          // cliente_id: this.$store.state.auth.user.cliente.id
         });
         this.ordenes = ordenes.data.data;
         this.loading = false;

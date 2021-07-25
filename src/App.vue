@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <notifications position="top center" width="600px" />
+    <notifications position="top center" style="top:100px" width="600px" />
     <v-app-bar
       app
       style="background: linear-gradient(90deg, #141b32, #3b466c 48%, #141b32)"
@@ -42,17 +42,26 @@
           <v-icon>mdi-open-in-new</v-icon>
         </v-btn>
       </div>
-      <div v-if="currentUser">
-        <router-link to="/ordenes">
-          <v-btn text>
-            <span class="mr-2">Mis Ordenes</span>
-          </v-btn>
-        </router-link>
-        <router-link to="/ubicacion">
-          <v-btn text>
-            <span class="mr-2">Mis Direcciones</span>
-          </v-btn>
-        </router-link>
+      <div v-if="currentUser" style="display:flex">
+        <div v-if="currentUser.rol === 3 || currentUser.rol === 1">
+          <router-link to="/ordenes">
+            <v-btn text>
+              <span class="mr-2">Mis Ordenes</span>
+            </v-btn>
+          </router-link>
+          <router-link to="/ubicacion">
+            <v-btn text>
+              <span class="mr-2">Mis Direcciones</span>
+            </v-btn>
+          </router-link>
+        </div>
+        <div v-if="currentUser.rol === 2 || currentUser.rol === 1">
+          <router-link to="/trabajador/ordenes">
+            <v-btn text>
+              <span class="mr-2">Ordenes</span>
+            </v-btn>
+          </router-link>
+        </div>
         <v-btn text @click.prevent="logOut">
           <span class="mr-2">Cerrar Sesión</span>
         </v-btn>
@@ -98,8 +107,8 @@ export default {
     goHome() {
       this.$router.push("/");
     },
-    logOut() {
-      this.$store.dispatch("auth/logout");
+    async logOut() {
+      await this.$store.dispatch("auth/logout");
       this.$router.push("/");
     },
     goRegister() {

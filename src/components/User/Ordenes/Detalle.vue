@@ -25,16 +25,11 @@
                   </v-col>
                   <v-col cols="12">
                     <center>
-                      <v-icon large style="margin: 1rem" color="orange">
-                        mdi-bell-ring-outline
-                      </v-icon>
                       <h2><span v-html="notificationMsg"></span></h2>
                       <br />
-                      <v-btn large>
-                        <v-icon large style="margin: 1rem" :color="iconColor">
-                          {{ this.icon }}
-                        </v-icon>
-                      </v-btn>
+                      <v-icon large style="margin: 1rem" color="orange">
+                        {{ this.icon }}
+                      </v-icon>
                     </center>
                   </v-col>
                 </v-row>
@@ -81,6 +76,12 @@ export default {
   watch: {
     ordenData: function() {
       switch (this.ordenData.estatus) {
+        case 1:
+          this.notificationMsg =
+            "Su orden se encuentra en revisión, en breve sera procesada.";
+          this.icon = "mdi-progress-check";
+          this.iconColor = "blue";
+          break;
         case 2:
           this.notificationMsg =
             "Su orden se encuentra en proceso, en breve saldra hacia su destino.";
@@ -115,127 +116,79 @@ export default {
     }
   },
   mounted() {
-    this.loadData();
+    this.loadData()
+    this.getCurrentPosition();
   },
   methods: {
     async getCurrentPosition() {
       var self = this;
       setInterval(function() {
-        navigator.geolocation.getCurrentPosition(function(position) {
-          console.log(position.coords.latitude, position.coords.longitude);
-
-          self.currentPosition = [
-            position.coords.latitude,
-            position.coords.longitude
-          ];
-
-          // self.placeMarker([position.coords.latitude, position.coords.longitude])
-          // await self.saveCurrentPosition()
-        });
+        self.loadData()
       }, 10000);
     },
-    async placeMarker(coordenadas) {
-      if (this.marker) {
-        this.map.removeLayer(this.marker);
-      }
+    // async getCoordenates() {
+    //   try {
+    //     this.loading = true;
 
-      this.currentPosition = coordenadas;
-      await this.saveCurrentPosition();
+    //     const coordenates = await this.$axios.post("recorridos/index", {
+    //       orden_id: this.ordenData.id
+    //     });
 
-      var GlufcoIcon = L.icon({
-        iconUrl: "../img/GLUFCOIN.svg",
-        iconSize: [60, 61], // size of the icon
-        iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
-        popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
-      });
+    //     console.log(coordenates.data.data);
 
-      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map);
-    },
-    async saveCurrentPosition() {
-      try {
-        this.loading = true;
+    //     let coords = coordenates.data.data.split(",");
 
-        await this.$axios.post("recorridos/create", {
-          orden_id: this.ordenData.id,
-          coordenadas: this.currentPosition.toString()
-        });
+    //     this.currentPosition = [
+    //       coords[0],
+    //       coords[1]
+    //     ];
 
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        if (error.response) {
-          this.$notify({
-            title: "Error",
-            text: error.response.data.data,
-            type: "error"
-          });
-        } else {
-          this.$notify({
-            title: "Error",
-            text: error.message,
-            type: "error"
-          });
-        }
-      }
-    },
+    //     this.loading = false;
+    //   } catch (error) {
+    //     this.loading = false;
+    //     if (error.response) {
+    //       this.$notify({
+    //         title: "Error",
+    //         text: error.response.data.data,
+    //         type: "error"
+    //       });
+    //     } else {
+    //       this.$notify({
+    //         title: "Error",
+    //         text: error.message,
+    //         type: "error"
+    //       });
+    //     }
+    //   }
+    // },
     async onEnter() {
       await this.createUbicacion();
     },
     async loadData() {
       this.loading = true;
       try {
-        const recorridos = await this.$axios.post("recorridos/index", {
-          orden_id: this.data.id
-        });
 
         const orden = await this.$axios.post("ordenes/detalle", {
           orden_id: this.data.id
         });
 
-        this.recorridos = recorridos.data.data;
         this.ordenData = orden.data.data;
 
-        // await this.setupLeafletMap()
-        await this.getCurrentPosition();
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        if (error.response) {
-          this.$notify({
-            title: "Error",
-            text: error.response.data.data,
-            type: "error"
-          });
-        } else {
-          this.$notify({
-            title: "Error",
-            text: error.message,
-            type: "error"
-          });
-        }
-      }
-    },
-    async updateStatus() {
-      try {
-        this.loading = true;
-
-        if (this.ordenData.estatus === 2) {
-          this.ordenData.estatus = this.ordenData.estatus + 1;
-        }
-
-        const update = await this.$axios.post("ordenes/update", {
-          orden_id: this.ordenData.id,
-          estatus: parseFloat(this.ordenData.estatus) + 1
+        const coordenates = await this.$axios.post("recorridos/index", {
+          orden_id: this.ordenData.id
         });
 
-        this.$notify({
-          title: "Exito",
-          text: update.data.data,
-          type: "success"
-        });
+        if (!!coordenates.data.data) {
+          let coords = coordenates.data.data.split(",");
+  
+          this.currentPosition = [
+            coords[0],
+            coords[1]
+          ];
+        }
+
 
         this.loading = false;
-        await this.loadData();
       } catch (error) {
         this.loading = false;
         if (error.response) {

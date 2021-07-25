@@ -14,25 +14,42 @@ const cliente = (to, from, next) => {
 
   if (!currentUser) next({ name: 'Login' })
 
-  if (!currentUser.email_verificado) next({ name: 'OrdenesUsuario' })
+  if (currentUser.rol === 2) next({ name: 'OrdenesTrabajador' })
 
-  if (!currentUser.celular.verificado) next({ name: 'OrdenesUsuario' })
+  if (to.name !== 'OrdenesUsuario') {
+  
+    if (!currentUser.email_verificado) next({ name: 'OrdenesUsuario' })
+  
+    if (!currentUser.celular.verificado) next({ name: 'OrdenesUsuario' })
+  
+    else next()
+  } else {
+    next()
+  }
+}
 
-  next()
+const trabajador = (to, from, next) => {
+  const currentUser = store.state.auth.user
+
+  if (!currentUser) next({ name: 'Login' })
+
+  if (currentUser.rol === 3) next({ name: 'OrdenesUsuario' })
+
+  else next()
 }
 
 const routes = [
   {
     path: '/ordenes',
     name: 'OrdenesUsuario',
-    component: OrdenesUsuario
-    // beforeEnter: cliente
+    component: OrdenesUsuario,
+    beforeEnter: cliente
   },
   {
     path: '/trabajador/ordenes',
     name: 'OrdenesTrabajador',
-    component: OrdenesTrabajador
-    // beforeEnter: cliente
+    component: OrdenesTrabajador,
+    beforeEnter: trabajador
   },
   {
     path: '/ubicacion',

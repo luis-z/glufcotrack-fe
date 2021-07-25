@@ -122,26 +122,9 @@ export default {
           ];
 
           // self.placeMarker([position.coords.latitude, position.coords.longitude])
-          // await self.saveCurrentPosition()
+          self.saveCurrentPosition()
         });
       }, 10000);
-    },
-    async placeMarker(coordenadas) {
-      if (this.marker) {
-        this.map.removeLayer(this.marker);
-      }
-
-      this.currentPosition = coordenadas;
-      await this.saveCurrentPosition();
-
-      var GlufcoIcon = L.icon({
-        iconUrl: "../img/GLUFCOIN.svg",
-        iconSize: [60, 61], // size of the icon
-        iconAnchor: [26, 60], // point of the icon which will correspond to marker's location
-        popupAnchor: [3, -60] // point from which the popup should open relative to the iconAnchor
-      });
-
-      this.marker = L.marker(coordenadas, { icon: GlufcoIcon }).addTo(this.map);
     },
     async saveCurrentPosition() {
       try {
@@ -217,6 +200,7 @@ export default {
 
         const update = await this.$axios.post("ordenes/update", {
           orden_id: this.ordenData.id,
+          trabajador_id: this.$store.state.auth.user.trabajador.id,
           estatus: parseFloat(this.ordenData.estatus) + 1
         });
 

@@ -184,11 +184,11 @@ export default {
     ],
     nameRules: [
       v => !!v || "El nombre es requerido",
-      v => (v && v.length <= 10) || "Máximo 10 carácteres"
+      v => (v && v.length <= 50) || "Máximo 50 carácteres"
     ],
     lastnameRules: [
       v => !!v || "El apellido es requerido",
-      v => (v && v.length <= 10) || "Máximo 10 carácteres"
+      v => (v && v.length <= 50) || "Máximo 50 carácteres"
     ],
     numeroDocumentoRules: [
       v => !!v || "El numero de documento es requerido es requerido"
@@ -221,7 +221,7 @@ export default {
 
         // validaciones
         const register = await this.$axios.post("register", {
-          email: this.email,
+          email: this.email.toLowerCase(),
           nombre: this.name,
           apellido: this.lastname,
           numero_telefono: this.operator + this.phoneNumber,

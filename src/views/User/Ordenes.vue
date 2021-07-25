@@ -65,6 +65,11 @@ export default {
           return
         }
 
+        if (this.currentUser.rol === 1) {
+          this.component = ListarOrdenes
+          return
+        }
+
         if (!this.currentUser.email_verificado) {
           console.log('CORREO SIN VERIFICAR')
           this.component = EmailVerification

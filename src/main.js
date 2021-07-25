@@ -34,7 +34,7 @@ axiosInstance.interceptors.response.use(
 
     if (error.response.data.message === 'Unauthenticated.') {
       store.dispatch('logout')
-      router.push('/login')
+      router.push('/')
     }
 
     throw error
