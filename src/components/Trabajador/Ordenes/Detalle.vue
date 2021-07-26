@@ -87,6 +87,12 @@ export default {
           this.icon = "mdi-bike-fast";
           this.iconColor = "#7300f1";
           break;
+        case 3:
+          this.notificationMsg =
+            "Orden Cancelada.";
+          this.icon = "mdi-cancel";
+          this.iconColor = "red";
+          break;
         case 4:
           this.notificationMsg =
             "Notificar al cliente <br> la llegada al destino de su orden";
@@ -196,6 +202,16 @@ export default {
 
         if (this.ordenData.estatus === 2) {
           this.ordenData.estatus = this.ordenData.estatus + 1;
+        }
+
+        if (this.ordenData.estatus === 6) {
+          this.$notify({
+            title: "Error",
+            text: 'Ya fue notificado.',
+            type: "error"
+          });
+
+          return
         }
 
         const update = await this.$axios.post("ordenes/update", {

@@ -312,7 +312,14 @@ export default {
         const ubicaciones = await this.$axios.post("/ubicaciones/index", {
           cliente_id: this.$store.state.auth.user.cliente.id
         });
-        this.ubicaciones = ubicaciones.data.data;
+
+        for (const place of ubicaciones.data.data) {
+          if (!place.estatus) {
+            continue
+          }
+          this.ubicaciones.push(place)
+        }
+
         this.loading = false;
       } catch (error) {
         this.loading = false;

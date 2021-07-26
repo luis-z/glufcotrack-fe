@@ -143,6 +143,10 @@ $swal2-background: #990000;
   font-family: Ubuntu !important;
 }
 
+.swal2-popup {
+  background: #fff!important;
+}
+
 .v-application {
   font-family: Ubuntu !important;
 }
