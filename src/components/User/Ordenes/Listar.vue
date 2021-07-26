@@ -95,7 +95,8 @@ export default {
       try {
         this.loading = true;
         const ordenes = await this.$axios.post("/ordenes/index", {
-          cliente_id: this.$store.state.auth.user.cliente.id
+          cliente_id: this.$store.state.auth.user.cliente.id,
+          cliente: true
         });
         this.ordenes = ordenes.data.data;
         this.loading = false;
